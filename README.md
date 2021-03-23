@@ -13,7 +13,7 @@
 
 #### Install
 ```ssh
-composer require reinvanoyen/oak
+composer require tallieutallieu/oak
 ```
 
 #### Creating an application

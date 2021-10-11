@@ -16,7 +16,7 @@
         "psr/http-server-handler": "^1.0@dev",
         "psr/http-server-middleware": "^1.0@dev",
         "vlucas/phpdotenv": "^4.1@dev",
-        "dragonmantank/cron-expression": "dev-master"
+        "dragonmantank/cron-expression": "3.0.2"
     },
     "autoload": {
       "psr-4": {

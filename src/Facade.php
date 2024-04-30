@@ -34,7 +34,7 @@ abstract class Facade
      * @return mixed
      * @throws \Exception
      */
-    final private static function getInstance()
+    final protected static function getInstance()
     {
         if (! self::$container) {
             throw new \Exception('No container set for facades');

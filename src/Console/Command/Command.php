@@ -85,7 +85,7 @@ abstract class Command
      *
      * @throws \Exception
      */
-    final private function make()
+    final protected function make()
     {
         if ($this->created) {
             return;

@@ -180,10 +180,12 @@ class Container implements ContainerInterface
         $injections = [];
 
         foreach ($parameters as $parameter) {
+            $class = $parameter->getType() && !$parameter->getType()->isBuiltin()
+                ? new ReflectionClass($parameter->getType()->getName())
+                : null;
 
             // Check if param is a class
-            if ($class = $parameter->getClass()) {
-
+            if ($class) {
                 $className = $class->name;
 
                 // Check if it was explicitely given as an argument

@@ -2,3 +2,7 @@
 .DS_Store
 .vagrant
 /vendor/
+
+.wakatime-project
+.yarn
+node_modules

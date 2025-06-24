@@ -68,5 +68,5 @@ interface ContainerInterface
      *
      * @return bool True if running via CLI, false if running via web server
      */
-    public function isRunningInConsole(): bool
+    public function isRunningInConsole(): bool;
 }

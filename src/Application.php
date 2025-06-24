@@ -196,16 +196,6 @@ class Application extends Container
     }
 
     /**
-     * Determine if the application is running in console/CLI mode
-     *
-     * @return bool True if running via CLI, false if running via web server
-     */
-    public function isRunningInConsole(): bool
-    {
-        return php_sapi_name() === 'cli';
-    }
-
-    /**
      * Get the path to the environment files directory
      *
      * @return string The absolute path to the env directory

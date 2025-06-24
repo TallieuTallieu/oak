@@ -124,7 +124,7 @@ class Container implements ContainerInterface
      */
     public function whenAsksGive(string $contract, string $argument, $value)
     {
-        if (! isset($this->arguments[$contract])) {
+        if (!isset($this->arguments[$contract])) {
             $this->arguments[$contract] = [];
         }
 
@@ -152,19 +152,27 @@ class Container implements ContainerInterface
     private function create(string $contract, array $arguments = [])
     {
         // First check if we can find an implementation for the requested contract
-        if (! $this->has($contract)) {
+        if (!$this->has($contract)) {
             if (class_exists($contract)) {
                 $implementation = $contract;
             } else {
-                throw new Exception('Could not create dependency with contract: '.$contract);
+                throw new Exception(
+                    'Could not create dependency with contract: ' . $contract
+                );
             }
         } else {
             $implementation = $this->contracts[$contract];
         }
 
         // Check if we have to give this class some stored arguments
-        if (is_string($implementation) && isset($this->arguments[$implementation])) {
-            $arguments = array_merge($this->arguments[$implementation], $arguments);
+        if (
+            is_string($implementation) &&
+            isset($this->arguments[$implementation])
+        ) {
+            $arguments = array_merge(
+                $this->arguments[$implementation],
+                $arguments
+            );
         }
 
         // Is it callable? Call it right away and return the results
@@ -176,21 +184,22 @@ class Container implements ContainerInterface
         $constructor = $reflect->getConstructor();
 
         if ($constructor === null) {
-            return new $implementation;
+            return new $implementation();
         }
 
         $parameters = $constructor->getParameters();
 
         if (!count($parameters)) {
-            return new $implementation;
+            return new $implementation();
         }
 
         $injections = [];
 
         foreach ($parameters as $parameter) {
-            $class = $parameter->getType() && !$parameter->getType()->isBuiltin()
-                ? new ReflectionClass($parameter->getType()->getName())
-                : null;
+            $class =
+                $parameter->getType() && !$parameter->getType()->isBuiltin()
+                    ? new ReflectionClass($parameter->getType()->getName())
+                    : null;
 
             // Check if param is a class
             if ($class) {
@@ -198,16 +207,12 @@ class Container implements ContainerInterface
 
                 // Check if it was explicitely given as an argument
                 if (isset($arguments[$className])) {
-
                     // Check if it's a string
                     if (is_string($arguments[$className])) {
-
                         // If so, get it from the container
                         $injections[] = $this->get($arguments[$className]);
                         continue;
-
                     } else {
-
                         // ...else inject it raw
                         $injections[] = $arguments[$className];
                         continue;
@@ -218,16 +223,12 @@ class Container implements ContainerInterface
 
                 // Check if the argument was given by argument name instead of class
                 if (isset($arguments[$argName])) {
-
                     // Check if it's a string
                     if (is_string($arguments[$argName])) {
-
                         // If so, get it from the container
                         $injections[] = $this->get($arguments[$argName]);
                         continue;
-
                     } else {
-
                         // ...else inject it raw
                         $injections[] = $arguments[$argName];
                         continue;
@@ -236,7 +237,6 @@ class Container implements ContainerInterface
 
                 // Check if the container has the class
                 if ($this->has($className)) {
-
                     // Get the class from the container and add it as injection
                     $injections[] = $this->get($className);
                     continue;
@@ -244,7 +244,6 @@ class Container implements ContainerInterface
 
                 // Check if the argument has a default value
                 if ($parameter->isDefaultValueAvailable()) {
-
                     // Inject the default value (most probably null)
                     $injections[] = $parameter->getDefaultValue();
                     continue;
@@ -253,31 +252,41 @@ class Container implements ContainerInterface
                 // Try to inject it anyway
                 $injections[] = $this->get($className);
                 continue;
-
             } else {
-
                 $argName = $parameter->getName();
 
                 // Check if the argument was explicitely given
                 if (isset($arguments[$argName])) {
-
                     $injections[] = $arguments[$argName];
                     continue;
-
                 }
 
                 // Check if the argument has a default value
-                if($parameter->isDefaultValueAvailable()) {
-
+                if ($parameter->isDefaultValueAvailable()) {
                     // Inject the default value
                     $injections[] = $parameter->getDefaultValue();
                     continue;
                 }
             }
 
-            throw new Exception('Could not provide argument "'.$parameter->getName().'" to '.$contract);
+            throw new Exception(
+                'Could not provide argument "' .
+                    $parameter->getName() .
+                    '" to ' .
+                    $contract
+            );
         }
 
         return $reflect->newInstanceArgs($injections);
+    }
+
+    /**
+     * Determine if the application is running in console/CLI mode
+     *
+     * @return bool True if running via CLI, false if running via web server
+     */
+    public function isRunningInConsole(): bool
+    {
+        return php_sapi_name() === 'cli';
     }
 }

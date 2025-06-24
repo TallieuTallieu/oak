@@ -62,4 +62,11 @@ interface ContainerInterface
      * @return T
      */
     public function getWith(string $contract, array $arguments);
+
+    /**
+     * Determine if the application is running in console/CLI mode
+     *
+     * @return bool True if running via CLI, false if running via web server
+     */
+    public function isRunningInConsole(): bool
 }

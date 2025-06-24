@@ -6,12 +6,16 @@ use Dotenv\Dotenv;
 use Oak\Container\Container;
 
 /**
- * Class Application
+ * Application class - The main framework bootstrap and service container
+ * 
+ * Acts as both the primary dependency injection container and application lifecycle manager.
+ * Orchestrates service provider registration, environment loading, and application booting.
+ * 
  * @package Oak
  */
 class Application extends Container
 {
-    const VERSION = '1.1.0';
+    const VERSION = '1.1.9';
 
     /**
      * @var bool $isBooted
@@ -44,10 +48,11 @@ class Application extends Container
     private $cachePath;
 
     /**
-     * Application constructor.
-     * @param string $envPath
-     * @param string $configPath
-     * @param string $cachePath
+     * Application constructor - Initialize paths and bootstrap core services
+     * 
+     * @param string $envPath Path to directory containing .env files
+     * @param string $configPath Path to configuration files directory  
+     * @param string $cachePath Path to cache storage directory
      */
     public function __construct(string $envPath, string $configPath, string $cachePath)
     {
@@ -62,8 +67,16 @@ class Application extends Container
     }
 
     /**
-     * @param $provider
-     * @throws \Exception
+     * Register one or more service providers with the application
+     * 
+     * Supports multiple input formats:
+     * - Array of providers (recursive registration)
+     * - String class name (instantiated automatically)
+     * - Provider instance (registered directly)
+     * 
+     * @param ServiceProvider|ServiceProvider[]|class-string<ServiceProvider> $provider
+     * @return void
+     * @throws \Exception When provider instantiation fails
      */
     public function register($provider): void
     {
@@ -91,9 +104,12 @@ class Application extends Container
     }
 
     /**
-     * Initialize a service provider
+     * Initialize a service provider by calling its register method
+     * 
+     * If the application is already booted, immediately boots the provider as well.
      *
-     * @param ServiceProvider $provider
+     * @param ServiceProvider $provider The provider to initialize
+     * @return void
      */
     private function initServiceProvider(ServiceProvider $provider): void
     {
@@ -106,9 +122,14 @@ class Application extends Container
     }
 
     /**
-     * @param ServiceProvider $provider
+     * Boot a service provider by calling its boot method
+     * 
+     * Prevents double-booting by checking the provider's booted status.
+     *
+     * @param ServiceProvider $provider The provider to boot
+     * @return void
      */
-    private function bootServiceProvider(ServiceProvider $provider)
+    private function bootServiceProvider(ServiceProvider $provider): void
     {
         if (! $provider->isBooted()) {
             $provider->setBooted();
@@ -117,11 +138,15 @@ class Application extends Container
     }
 
     /**
-     * Get a value by key from the container making sure lazy providers are initialized first
+     * Resolve a service from the container with lazy provider support
+     * 
+     * If the requested service has a lazy provider, boots the provider first
+     * before delegating to the parent container's get method.
      *
-     * @param string $key
-     * @return mixed
-     * @throws \Exception
+     * @template T of object
+     * @param class-string<T>|string $key The service contract or key
+     * @return T The resolved service instance
+     * @throws \Exception When service cannot be resolved
      */
     public function get(string $key)
     {
@@ -134,7 +159,10 @@ class Application extends Container
     }
 
     /**
-     * Boots all non-lazy registered service providers
+     * Boot all registered (non-lazy) service providers
+     * 
+     * Prevents double-booting and marks the application as fully booted.
+     * Lazy providers are booted on-demand when their services are first requested.
      *
      * @return void
      */
@@ -154,7 +182,10 @@ class Application extends Container
     }
 
     /**
-     * Bootstrap the application
+     * Bootstrap the application by booting all registered service providers
+     * 
+     * This is typically called after all service providers have been registered
+     * and the application is ready to handle requests.
      *
      * @return void
      */
@@ -165,7 +196,9 @@ class Application extends Container
     }
 
     /**
-     * @return bool
+     * Determine if the application is running in console/CLI mode
+     *
+     * @return bool True if running via CLI, false if running via web server
      */
     public function isRunningInConsole(): bool
     {
@@ -173,7 +206,9 @@ class Application extends Container
     }
 
     /**
-     * @return string
+     * Get the path to the environment files directory
+     *
+     * @return string The absolute path to the env directory
      */
     public function getEnvPath(): string
     {
@@ -181,7 +216,9 @@ class Application extends Container
     }
 
     /**
-     * @return string
+     * Get the path to the configuration files directory
+     *
+     * @return string The absolute path to the config directory
      */
     public function getConfigPath(): string
     {
@@ -189,7 +226,9 @@ class Application extends Container
     }
 
     /**
-     * @return string
+     * Get the path to the cache storage directory
+     *
+     * @return string The absolute path to the cache directory
      */
     public function getCachePath(): string
     {
@@ -197,9 +236,14 @@ class Application extends Container
     }
 
     /**
-     * Loads environment vars into the application
+     * Load environment variables from .env files
+     * 
+     * Uses Dotenv to load environment variables from the configured env path.
+     * Variables are loaded as immutable to prevent runtime modification.
+     * 
+     * @return void
      */
-    private function loadEnv()
+    private function loadEnv(): void
     {
         (Dotenv::createImmutable($this->getEnvPath()))
             ->load();

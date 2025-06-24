@@ -39,9 +39,10 @@ class Container implements ContainerInterface
     private $arguments = [];
 
     /**
-     * @param string $contract
-     * @param $implementation
-     * @return mixed|void
+     * @template T of object
+     * @param class-string<T>|string $contract
+     * @param T|callable|string $implementation
+     * @return void
      */
     public function set(string $contract, $implementation)
     {
@@ -62,8 +63,10 @@ class Container implements ContainerInterface
     /**
      * Stores a implementation in the container for the given key and also store it as a singleton
      *
-     * @param string $contract
-     * @param mixed $implementation
+     * @template T of object
+     * @param class-string<T>|string $contract
+     * @param T|callable|string $implementation
+     * @return void
      */
     public function singleton(string $contract, $implementation)
     {
@@ -74,8 +77,10 @@ class Container implements ContainerInterface
     /**
      * Directly store an instance for a contract
      *
-     * @param string $contract
-     * @param $instance
+     * @template T of object
+     * @param class-string<T>|string $contract
+     * @param T $instance
+     * @return void
      */
     public function instance(string $contract, $instance)
     {
@@ -86,8 +91,9 @@ class Container implements ContainerInterface
     /**
      * Retreives a value from the container by a given contract
      *
-     * @param string $contract
-     * @return mixed
+     * @template T of object
+     * @param class-string<T>|string $contract
+     * @return T
      * @throws \Exception
      */
     public function get(string $contract)
@@ -111,9 +117,10 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param string $contract
+     * @param class-string|string $contract
      * @param string $argument
-     * @param $value
+     * @param mixed $value
+     * @return void
      */
     public function whenAsksGive(string $contract, string $argument, $value)
     {
@@ -125,9 +132,10 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param string $contract
+     * @template T of object
+     * @param class-string<T>|string $contract
      * @param array $arguments
-     * @return mixed
+     * @return T
      * @throws Exception
      */
     public function getWith(string $contract, array $arguments)

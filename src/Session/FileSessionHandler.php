@@ -61,10 +61,10 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * Garbage collection
      *
-     * @param int $maxLifeTime
-     * @return bool
+     * @param int $max_lifetime
+     * @return int|false Number of deleted sessions or false on failure
      */
-    public function gc(int $max_lifetime): int|false
+    public function gc(int $max_lifetime)
     {
         $now = time();
         $files = $this->filesystem->files($this->path);

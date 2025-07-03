@@ -85,7 +85,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @param string $name
      * @return bool
      */
-    public function open(string $path, string $name): bool
+    public function open($path, $name): bool
     {
         return true;
     }

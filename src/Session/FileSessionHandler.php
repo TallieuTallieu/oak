@@ -64,7 +64,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @param int $max_lifetime
      * @return int|false Number of deleted sessions or false on failure
      */
-    public function gc(int $max_lifetime)
+    public function gc($max_lifetime)
     {
         $now = time();
         $files = $this->filesystem->files($this->path);
@@ -85,7 +85,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @param string $name
      * @return bool
      */
-    public function open(string $path, string $name): bool
+    public function open($path, $name): bool
     {
         return true;
     }

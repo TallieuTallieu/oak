@@ -4,12 +4,6 @@
     "description": "Simple PHP building block framework",
     "keywords": ["container", "facade", "dependency injection", "framework", "library"],
     "type": "library",
-    "authors": [
-        {
-            "name": "Rein Van Oyen",
-            "email": "reinvanoyen@gmail.com"
-        }
-    ],
     "require": {
         "nyholm/psr7": "^1.0@dev",
         "nyholm/psr7-server": "1.0.2",

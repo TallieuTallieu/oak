@@ -77,7 +77,7 @@ class Session
      */
     private function loadData()
     {
-        $this->data = unserialize($this->handler->read($this->getId()));
+        $this->data = unserialize($this->handler->read($this->getId())) ?: [];
         $this->loaded = true;
     }
 

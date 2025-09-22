@@ -32,5 +32,5 @@ interface DispatcherInterface
 	 * @param EventInterface|null $event
 	 * @return mixed
 	 */
-	public function dispatch(string $eventName, EventInterface $event = null);
+	public function dispatch(string $eventName, ?EventInterface $event = null);
 }

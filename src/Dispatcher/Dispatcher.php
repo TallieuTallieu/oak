@@ -57,9 +57,9 @@ class Dispatcher implements DispatcherInterface
      * Dispatches an event by name
      *
      * @param string $eventName
-     * @param EventInterface $event
+     * @param ?EventInterface $event
      */
-    public function dispatch(string $eventName, EventInterface $event = null)
+    public function dispatch(string $eventName, ?EventInterface $event = null)
     {
         // Check if there are listeners for this event
         if (! $this->hasListeners($eventName)) {

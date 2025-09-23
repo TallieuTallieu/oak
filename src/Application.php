@@ -235,7 +235,7 @@ class Application extends Container
      */
     private function loadEnv(): void
     {
-        (Dotenv::createImmutable($this->getEnvPath()))
+        (Dotenv::createUnsafeImmutable($this->getEnvPath()))
             ->load();
     }
 }

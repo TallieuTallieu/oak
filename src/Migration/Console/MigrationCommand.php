@@ -32,6 +32,7 @@ class MigrationCommand extends Command
             ->addSubCommand(ListCommand::class)
             ->addSubCommand(MigrateCommand::class)
             ->addSubCommand(ResetCommand::class)
+            ->addSubCommand(ResetCountersCommand::class)
             ->addSubCommand(DowndateCommand::class)
             ->addSubCommand(UpdateCommand::class)
         ;

@@ -150,6 +150,15 @@ class Migrator
     }
 
     /**
+     * Resets the version counter to 0 without running any migrations
+     *
+     */
+    public function resetCounter()
+    {
+        $this->versionStorage->store($this, 0);
+    }
+
+    /**
      * Rolls to a specific version
      *
      * @param int $version

@@ -34,6 +34,8 @@
 - **Team**: webdev (@webdev)
 - **Default Workflow**: Website (ID: 500000005)
 - When creating stories, assign to epic 8331 and use team "webdev"
+- Prefix the title by 'oak: '
+- Keep the title concise, the branch name will be inferred by the title
 
 ## Workflow
 

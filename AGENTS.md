@@ -39,3 +39,4 @@
 
 - **NEVER commit without asking** - Always request permission before committing changes
 - **NEVER change story states** - Story state transitions happen automatically via git hooks
+- **FORMAT before commit** - Format files before committing them, use prettier.

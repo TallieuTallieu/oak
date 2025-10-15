@@ -289,4 +289,43 @@ class Container implements ContainerInterface
     {
         return php_sapi_name() === 'cli';
     }
+
+    /**
+     * Get the path to the environment files directory
+     *
+     * @return string The absolute path to the env directory
+     * @throws Exception This method is only available on Application instances
+     */
+    public function getEnvPath(): string
+    {
+        throw new Exception(
+            'Path methods are only available on Application instances'
+        );
+    }
+
+    /**
+     * Get the path to the configuration files directory
+     *
+     * @return string The absolute path to the config directory
+     * @throws Exception This method is only available on Application instances
+     */
+    public function getConfigPath(): string
+    {
+        throw new Exception(
+            'Path methods are only available on Application instances'
+        );
+    }
+
+    /**
+     * Get the path to the cache storage directory
+     *
+     * @return string The absolute path to the cache directory
+     * @throws Exception This method is only available on Application instances
+     */
+    public function getCachePath(): string
+    {
+        throw new Exception(
+            'Path methods are only available on Application instances'
+        );
+    }
 }

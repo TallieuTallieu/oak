@@ -7,10 +7,10 @@ use Oak\Container\Container;
 
 /**
  * Application class - The main framework bootstrap and service container
- * 
+ *
  * Acts as both the primary dependency injection container and application lifecycle manager.
  * Orchestrates service provider registration, environment loading, and application booting.
- * 
+ *
  * @package Oak
  */
 class Application extends Container
@@ -49,13 +49,16 @@ class Application extends Container
 
     /**
      * Application constructor - Initialize paths and bootstrap core services
-     * 
+     *
      * @param string $envPath Path to directory containing .env files
-     * @param string $configPath Path to configuration files directory  
+     * @param string $configPath Path to configuration files directory
      * @param string $cachePath Path to cache storage directory
      */
-    public function __construct(string $envPath, string $configPath, string $cachePath)
-    {
+    public function __construct(
+        string $envPath,
+        string $configPath,
+        string $cachePath
+    ) {
         $this->envPath = $envPath;
         $this->configPath = $configPath;
         $this->cachePath = $cachePath;
@@ -68,13 +71,13 @@ class Application extends Container
 
     /**
      * Register one or more service providers with the application
-     * 
+     *
      * Supports multiple input formats:
      * - Array of providers (recursive registration)
      * - String class name (instantiated automatically)
      * - Provider instance (registered directly)
-     * 
-     * @param ServiceProvider|ServiceProvider[]|class-string<ServiceProvider> $provider
+     *
+     * @param ServiceProvider|array<ServiceProvider|class-string<ServiceProvider>>|class-string<ServiceProvider> $provider
      * @return void
      * @throws \Exception When provider instantiation fails
      */
@@ -105,7 +108,7 @@ class Application extends Container
 
     /**
      * Initialize a service provider by calling its register method
-     * 
+     *
      * If the application is already booted, immediately boots the provider as well.
      *
      * @param ServiceProvider $provider The provider to initialize
@@ -123,7 +126,7 @@ class Application extends Container
 
     /**
      * Boot a service provider by calling its boot method
-     * 
+     *
      * Prevents double-booting by checking the provider's booted status.
      *
      * @param ServiceProvider $provider The provider to boot
@@ -131,7 +134,7 @@ class Application extends Container
      */
     private function bootServiceProvider(ServiceProvider $provider): void
     {
-        if (! $provider->isBooted()) {
+        if (!$provider->isBooted()) {
             $provider->setBooted();
             $provider->boot($this);
         }
@@ -139,7 +142,7 @@ class Application extends Container
 
     /**
      * Resolve a service from the container with lazy provider support
-     * 
+     *
      * If the requested service has a lazy provider, boots the provider first
      * before delegating to the parent container's get method.
      *
@@ -160,7 +163,7 @@ class Application extends Container
 
     /**
      * Boot all registered (non-lazy) service providers
-     * 
+     *
      * Prevents double-booting and marks the application as fully booted.
      * Lazy providers are booted on-demand when their services are first requested.
      *
@@ -183,7 +186,7 @@ class Application extends Container
 
     /**
      * Bootstrap the application by booting all registered service providers
-     * 
+     *
      * This is typically called after all service providers have been registered
      * and the application is ready to handle requests.
      *
@@ -227,15 +230,14 @@ class Application extends Container
 
     /**
      * Load environment variables from .env files
-     * 
+     *
      * Uses Dotenv to load environment variables from the configured env path.
      * Variables are loaded as immutable to prevent runtime modification.
-     * 
+     *
      * @return void
      */
     private function loadEnv(): void
     {
-        (Dotenv::createUnsafeImmutable($this->getEnvPath()))
-            ->load();
+        Dotenv::createUnsafeImmutable($this->getEnvPath())->load();
     }
 }

@@ -15,7 +15,7 @@ use Oak\Container\Container;
  */
 class Application extends Container
 {
-    const VERSION = '1.1.9';
+    const VERSION = '3.0.9';
 
     /**
      * @var bool $isBooted

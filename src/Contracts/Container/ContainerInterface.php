@@ -69,4 +69,25 @@ interface ContainerInterface
      * @return bool True if running via CLI, false if running via web server
      */
     public function isRunningInConsole(): bool;
+
+    /**
+     * Get the path to the environment files directory
+     *
+     * @return string The absolute path to the env directory
+     */
+    public function getEnvPath(): string;
+
+    /**
+     * Get the path to the configuration files directory
+     *
+     * @return string The absolute path to the config directory
+     */
+    public function getConfigPath(): string;
+
+    /**
+     * Get the path to the cache storage directory
+     *
+     * @return string The absolute path to the cache directory
+     */
+    public function getCachePath(): string;
 }

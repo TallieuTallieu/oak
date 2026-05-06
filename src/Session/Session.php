@@ -158,7 +158,7 @@ class Session
      */
     public function save()
     {
-        if (! $this->saved) {
+        if (! $this->saved && $this->getId() !== null) {
             $this->handler->write($this->getId(), serialize($this->data));
             $this->saved = true;
         }

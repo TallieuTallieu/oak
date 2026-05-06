@@ -18,7 +18,7 @@ class SessionServiceProvider extends ServiceProvider
         $app->singleton(Session::class, Session::class);
         $app->singleton(SessionIdentifierInterface::class, SessionIdentifier::class);
 
-        $app->whenAsksGive(FileSessionHandler::class, 'path', $config->get('session.path', 'sessions'));
+        $app->whenAsksGive(FileSessionHandler::class, 'path', SessionPath::resolve($app, $config));
         $app->whenAsksGive(Session::class, 'name', $config->get('session.name', 'app'));
     }
 

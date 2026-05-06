@@ -11,6 +11,7 @@ use Oak\Contracts\Console\OutputInterface;
 use Oak\Contracts\Container\ContainerInterface;
 use Oak\Contracts\Filesystem\FilesystemInterface;
 use Oak\Filesystem\Facade\Filesystem;
+use Oak\Session\SessionPath;
 
 class Status extends Command
 {
@@ -55,7 +56,7 @@ class Status extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $sessionFiles = $this->filesystem->files($this->config->get('session.path', 'sessions'));
+        $sessionFiles = $this->filesystem->files(SessionPath::resolve($this->app, $this->config));
 
         $output->writeLine('SESSION STATUS');
         $output->writeLine('Active sessions: '.count($sessionFiles), OutputInterface::TYPE_INFO);

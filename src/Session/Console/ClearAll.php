@@ -9,8 +9,8 @@ use Oak\Contracts\Console\InputInterface;
 use Oak\Contracts\Console\OutputInterface;
 use Oak\Contracts\Container\ContainerInterface;
 use Oak\Contracts\Filesystem\FilesystemInterface;
-use Oak\Filesystem\Facade\Filesystem;
 use Oak\Session\Session;
+use Oak\Session\SessionPath;
 
 class ClearAll extends Command
 {
@@ -64,7 +64,7 @@ class ClearAll extends Command
         $sessionHandler = $this->session->getHandler();
 
         $sessions = $this->filesystem->files(
-            $this->config->get('session.path', 'sessions')
+            SessionPath::resolve($this->app, $this->config)
         );
 
         foreach ($sessions as $session) {

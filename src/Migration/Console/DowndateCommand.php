@@ -22,8 +22,10 @@ class DowndateCommand extends Command
      * @param MigrationManager $manager
      * @param ContainerInterface $app
      */
-    public function __construct(MigrationManager $manager, ContainerInterface $app)
-    {
+    public function __construct(
+        MigrationManager $manager,
+        ContainerInterface $app
+    ) {
         $this->manager = $manager;
         parent::__construct($app);
     }
@@ -33,20 +35,21 @@ class DowndateCommand extends Command
         return $signature
             ->setName('downdate')
             ->addOption(
-                Option::create('migrator', 'm')
-                    ->setDescription('Specify a specific migrator')
-            )
-        ;
+                Option::create('migrator', 'm')->setDescription(
+                    'Specify a specific migrator'
+                )
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach (array_reverse($this->manager->getMigrators()) as $migrator) {
+        $migratorName = $input->getOption('migrator');
+        $migrators = $migratorName
+            ? $this->manager->getMigrators()
+            : $this->manager->getAutoRunMigrators();
 
-            if (
-                ! ($migratorName = $input->getOption('migrator')) ||
-                $migrator->getName() === $migratorName
-            ) {
+        foreach (array_reverse($migrators) as $migrator) {
+            if (!$migratorName || $migrator->getName() === $migratorName) {
                 $migrator->downdate();
 
                 if ($migratorName) {

@@ -36,3 +36,30 @@ docker: docker-init
 docker-exec: docker
 	docker compose exec oak-dev bash
 .PHONY: docker-exec
+
+## DOCUMENTATION SYNC ##
+
+sync-docs:
+	@if [ -z "$(OBSIDIAN_DOCS_PATH)" ]; then \
+		echo "$(Red)Error: OBSIDIAN_DOCS_PATH is not set in .env$(NC)"; \
+		echo ""; \
+		echo "Please add the following to your .env file:"; \
+		echo "$(Yellow)OBSIDIAN_DOCS_PATH=/path/to/your/obsidian/vault/Oak$(NC)"; \
+		echo ""; \
+		echo "Example:"; \
+		echo "$(Cyan)OBSIDIAN_DOCS_PATH=/Users/username/Documents/Obsidian/MyVault/Oak$(NC)"; \
+		exit 1; \
+	fi
+	@if [ ! -d "$(OBSIDIAN_DOCS_PATH)" ]; then \
+		echo "$(Yellow)Creating Obsidian docs directory: $(OBSIDIAN_DOCS_PATH)$(NC)"; \
+		mkdir -p "$(OBSIDIAN_DOCS_PATH)"; \
+	fi
+	@echo "$(Yellow)Syncing docs/ to $(OBSIDIAN_DOCS_PATH)...$(NC)"
+	@rsync -av --delete \
+		--exclude='.DS_Store' \
+		--exclude='*.swp' \
+		--exclude='*~' \
+		docs/ "$(OBSIDIAN_DOCS_PATH)/"
+	@echo "$(Green)Documentation synced successfully!$(NC)"
+	@echo "$(Cyan)Open Obsidian and navigate to: $(OBSIDIAN_DOCS_PATH)$(NC)"
+.PHONY: sync-docs

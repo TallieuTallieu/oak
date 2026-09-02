@@ -22,8 +22,10 @@ class UpdateCommand extends Command
      * @param MigrationManager $manager
      * @param ContainerInterface $app
      */
-    public function __construct(MigrationManager $manager, ContainerInterface $app)
-    {
+    public function __construct(
+        MigrationManager $manager,
+        ContainerInterface $app
+    ) {
         $this->manager = $manager;
         parent::__construct($app);
     }
@@ -33,19 +35,21 @@ class UpdateCommand extends Command
         return $signature
             ->setName('update')
             ->addOption(
-                Option::create('migrator', 'm')
-                    ->setDescription('Specify a specific migrator')
-            )
-        ;
+                Option::create('migrator', 'm')->setDescription(
+                    'Specify a specific migrator'
+                )
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->manager->getMigrators() as $migrator) {
-            if (
-                ! ($migratorName = $input->getOption('migrator')) ||
-                $migrator->getName() === $migratorName
-            ) {
+        $migratorName = $input->getOption('migrator');
+        $migrators = $migratorName
+            ? $this->manager->getMigrators()
+            : $this->manager->getAutoRunMigrators();
+
+        foreach ($migrators as $migrator) {
+            if (!$migratorName || $migrator->getName() === $migratorName) {
                 $migrator->update();
 
                 if ($migratorName) {

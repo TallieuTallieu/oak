@@ -6,3 +6,4 @@
 .wakatime-project
 .yarn
 node_modules
+/.env

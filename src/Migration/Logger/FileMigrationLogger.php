@@ -1,6 +1,6 @@
 <?php
 
-namespace Hector\Migration\Logger;
+namespace Oak\Migration\Logger;
 
 use Oak\Contracts\Filesystem\FilesystemInterface;
 use Oak\Contracts\Migration\MigrationLoggerInterface;
@@ -28,8 +28,10 @@ class FileMigrationLogger implements MigrationLoggerInterface
      * @param FilesystemInterface $filesystem
      * @param string $filename
      */
-    public function __construct(FilesystemInterface $filesystem, string $filename)
-    {
+    public function __construct(
+        FilesystemInterface $filesystem,
+        string $filename
+    ) {
         $this->filesystem = $filesystem;
         $this->filename = $filename;
     }

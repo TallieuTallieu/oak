@@ -12,31 +12,33 @@ use Oak\Contracts\Console\InputInterface;
 abstract class Input implements InputInterface
 {
     /**
-     * @var array $rawArguments
+     * @var array<int, string> $rawArguments
      */
     protected $rawArguments = [];
 
     /**
-     * @var array $missingArguments
+     * @var array<int, string> $missingArguments
      */
     protected $missingArguments = [];
 
     /**
      * Holds the given arguments
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $arguments = [];
 
     /**
      * Holds the given options
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $options = [];
 
     /**
      * Holds the given subcommand
+     *
+     * @var string|null
      */
     protected $subCommand;
 
@@ -50,7 +52,7 @@ abstract class Input implements InputInterface
     /**
      * Gets all given arguments
      *
-     * @return array
+     * @return array<string, mixed>
      */
     final public function getArguments()
     {
@@ -58,10 +60,10 @@ abstract class Input implements InputInterface
     }
 
     /**
-     * Gets the argument by index
+     * Gets the argument by name
      *
-     * @param int $name
-     * @return mixed|null
+     * @param string $name
+     * @return mixed
      */
     final public function getArgument(string $name)
     {
@@ -71,7 +73,7 @@ abstract class Input implements InputInterface
     /**
      * Checks if the argument was given
      *
-     * @param int $index
+     * @param string $name
      * @return bool
      */
     final public function hasArgument(string $name): bool
@@ -83,7 +85,8 @@ abstract class Input implements InputInterface
      * Sets an argument
      *
      * @param string $name
-     * @param $value
+     * @param mixed $value
+     * @return void
      */
     final public function setArgument(string $name, $value)
     {
@@ -93,7 +96,7 @@ abstract class Input implements InputInterface
     /**
      * Get all given options
      *
-     * @return array
+     * @return array<string, mixed>
      */
     final public function getOptions()
     {
@@ -104,7 +107,7 @@ abstract class Input implements InputInterface
      * Get an option
      *
      * @param string $name
-     * @return mixed|null
+     * @return mixed
      */
     final public function getOption(string $name)
     {
@@ -116,6 +119,7 @@ abstract class Input implements InputInterface
      *
      * @param string $name
      * @param mixed $value
+     * @return void
      */
     public function setOption(string $name, $value)
     {
@@ -135,7 +139,7 @@ abstract class Input implements InputInterface
     /**
      * Gets the subcommand
      *
-     * @return mixed
+     * @return string|null
      */
     final public function getSubCommand()
     {
@@ -146,6 +150,7 @@ abstract class Input implements InputInterface
      * Sets the subcommand
      *
      * @param string $name
+     * @return void
      */
     final public function setSubCommand(string $name)
     {
@@ -156,6 +161,7 @@ abstract class Input implements InputInterface
      * Binds the signature to the input
      *
      * @param Signature $signature
+     * @return void
      */
     public function setSignature(Signature $signature)
     {
@@ -174,6 +180,8 @@ abstract class Input implements InputInterface
 
     /**
      * Parse the raw arguments
+     *
+     * @return void
      */
     protected function parseRawArguments()
     {
@@ -189,36 +197,46 @@ abstract class Input implements InputInterface
 
         // Then we parse out the options
         foreach ($this->getSignature()->getOptions() as $option) {
-
             $definitions = [
-                '-'.$option->getName(),
-                '--'.$option->getName(),
+                '-' . $option->getName(),
+                '--' . $option->getName(),
             ];
 
             if ($alias = $option->getAlias()) {
-                $definitions[] = '-'.$alias;
-                $definitions[] = '--'.$alias;
+                $definitions[] = '-' . $alias;
+                $definitions[] = '--' . $alias;
             }
 
             foreach ($definitions as $definition) {
-                $optionPosition = array_search($definition, $this->rawArguments);
+                $optionPosition = array_search(
+                    $definition,
+                    $this->rawArguments
+                );
 
                 if ($optionPosition !== false) {
-
                     // We found the option in the list of given arguments
                     if (
                         isset($this->rawArguments[$optionPosition + 1]) &&
-                        substr($this->rawArguments[$optionPosition + 1], 0, strlen('-')) !== '-'
+                        substr(
+                            $this->rawArguments[$optionPosition + 1],
+                            0,
+                            strlen('-')
+                        ) !== '-'
                     ) {
                         // We also found a value for the option
                         // We remove the value of the option from the argument list
                         $optionValue = $this->rawArguments[$optionPosition + 1];
                         $this->setOption($option->getName(), $optionValue);
-                        array_splice($this->rawArguments, $optionPosition + 1, 1);
-
+                        array_splice(
+                            $this->rawArguments,
+                            $optionPosition + 1,
+                            1
+                        );
                     } else {
-
-                        $this->setOption($option->getName(), $option->getDefault());
+                        $this->setOption(
+                            $option->getName(),
+                            $option->getDefault()
+                        );
                     }
 
                     array_splice($this->rawArguments, $optionPosition, 1);
@@ -228,9 +246,15 @@ abstract class Input implements InputInterface
         }
 
         // Now we loop all arguments and make sure they are present
-        foreach ($this->getSignature()->getArguments() as $position => $argument) {
+        foreach (
+            $this->getSignature()->getArguments()
+            as $position => $argument
+        ) {
             if (isset($this->rawArguments[$position])) {
-                $this->setArgument($argument->getName(), $this->rawArguments[$position]);
+                $this->setArgument(
+                    $argument->getName(),
+                    $this->rawArguments[$position]
+                );
             } else {
                 $this->missingArguments[] = $argument->getName();
             }

@@ -12,7 +12,7 @@ use Oak\Contracts\Dispatcher\EventInterface;
 class Dispatcher implements DispatcherInterface
 {
     /**
-     * @var array $listeners
+     * @var array<string, array<int, callable(EventInterface|null): void>> $listeners
      */
     private $listeners = [];
 
@@ -20,11 +20,12 @@ class Dispatcher implements DispatcherInterface
      * Add a listener to an event by name
      *
      * @param string $eventName
-     * @param callable $listener
+     * @param callable(EventInterface|null): void $listener
+     * @return void
      */
     public function addListener(string $eventName, callable $listener)
     {
-        if (! $this->hasListeners($eventName)) {
+        if (!$this->hasListeners($eventName)) {
             $this->listeners[$eventName] = [];
         }
 
@@ -35,7 +36,7 @@ class Dispatcher implements DispatcherInterface
      * Gets the listeners of an event by name
      *
      * @param string $eventName
-     * @return array
+     * @return array<int, callable(EventInterface|null): void>
      */
     public function getListeners(string $eventName): array
     {
@@ -62,7 +63,7 @@ class Dispatcher implements DispatcherInterface
     public function dispatch(string $eventName, ?EventInterface $event = null)
     {
         // Check if there are listeners for this event
-        if (! $this->hasListeners($eventName)) {
+        if (!$this->hasListeners($eventName)) {
             return;
         }
 
@@ -71,7 +72,7 @@ class Dispatcher implements DispatcherInterface
             $listener($event);
 
             // Stop calling the upcoming listeners if the propagation was stopped
-            if ($event->isPropagationStopped()) {
+            if ($event !== null && $event->isPropagationStopped()) {
                 break;
             }
         }

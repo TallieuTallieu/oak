@@ -23,12 +23,12 @@ class Application extends Container
     private $isBooted;
 
     /**
-     * @var array $registeredProviders
+     * @var array<int, ServiceProvider> $registeredProviders
      */
     private $registeredProviders = [];
 
     /**
-     * @var array $lazyProviders
+     * @var array<string, ServiceProvider> $lazyProviders
      */
     private $lazyProviders = [];
 
@@ -148,7 +148,7 @@ class Application extends Container
      *
      * @template T of object
      * @param class-string<T>|string $key The service contract or key
-     * @return T The resolved service instance
+     * @return ($key is class-string<T> ? T : object) The resolved service instance
      * @throws \Exception When service cannot be resolved
      */
     public function get(string $key)

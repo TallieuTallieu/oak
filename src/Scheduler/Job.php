@@ -35,6 +35,8 @@ class Job implements JobInterface
      */
     public function execute(): string
     {
-        return shell_exec($this->command);
+        $output = shell_exec($this->command);
+
+        return is_string($output) ? $output : '';
     }
 }

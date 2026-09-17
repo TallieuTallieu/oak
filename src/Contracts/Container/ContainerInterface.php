@@ -11,7 +11,7 @@ interface ContainerInterface
     /**
      * @template T of object
      * @param class-string<T>|string $contract
-     * @param T|callable|string $mixed
+     * @param T|callable(ContainerInterface): T|class-string<T>|string $mixed
      * @return void
      */
     public function set(string $contract, $mixed);
@@ -19,7 +19,7 @@ interface ContainerInterface
     /**
      * @template T of object
      * @param class-string<T>|string $contract
-     * @return T
+     * @return ($contract is class-string<T> ? T : object)
      */
     public function get(string $contract);
 
@@ -34,7 +34,7 @@ interface ContainerInterface
      *
      * @template T of object
      * @param class-string<T>|string $contract
-     * @param T|callable|string $implementation
+     * @param T|callable(ContainerInterface): T|class-string<T>|string $implementation
      * @return void
      */
     public function singleton(string $contract, $implementation);
@@ -58,8 +58,8 @@ interface ContainerInterface
     /**
      * @template T of object
      * @param class-string<T>|string $contract
-     * @param array $arguments
-     * @return T
+     * @param array<string, mixed> $arguments
+     * @return ($contract is class-string<T> ? T : object)
      */
     public function getWith(string $contract, array $arguments);
 

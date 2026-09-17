@@ -19,13 +19,14 @@ class Kernel extends Command implements KernelInterface
     /**
      * An array holding registered commands
      *
-     * @var array
+     * @var array<int, Command|class-string<Command>>
      */
     private $registeredCommands = [];
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return void
      * @throws \Exception
      */
     public function handle(InputInterface $input, OutputInterface $output)
@@ -45,7 +46,8 @@ class Kernel extends Command implements KernelInterface
     /**
      * Register a command
      *
-     * @param $command
+     * @param Command|class-string<Command> $command
+     * @return void
      */
     public function registerCommand($command)
     {
@@ -58,14 +60,19 @@ class Kernel extends Command implements KernelInterface
      */
     protected function createSignature(Signature $signature): Signature
     {
-        return $signature->setName('oak')
-            ->addOption(Option::create('version', 'v')->setDescription('Display the version of Oak framework'))
-        ;
+        return $signature
+            ->setName('oak')
+            ->addOption(
+                Option::create('version', 'v')->setDescription(
+                    'Display the version of Oak framework'
+                )
+            );
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return void
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -73,7 +80,10 @@ class Kernel extends Command implements KernelInterface
         $this->showLogo($output);
         if ($input->getOption('version')) {
             $output->newline();
-            $output->writeLine('Oak framework version '.Application::VERSION, OutputInterface::TYPE_INFO);
+            $output->writeLine(
+                'Oak framework version ' . Application::VERSION,
+                OutputInterface::TYPE_INFO
+            );
             $output->writeLine('By Rein Van Oyen');
             $output->newline();
             $output->writeLine('More information, feedback or need help?');
@@ -86,10 +96,16 @@ class Kernel extends Command implements KernelInterface
 
     /**
      * @param OutputInterface $output
+     * @return void
      */
     private function showLogo(OutputInterface $output)
     {
-        $output->write(file_get_contents(__DIR__.'/../Resources/ascii-logo.txt'));
+        $logo = file_get_contents(__DIR__ . '/../Resources/ascii-logo.txt');
+
+        if ($logo !== false) {
+            $output->write($logo);
+        }
+
         $output->newline();
     }
 }

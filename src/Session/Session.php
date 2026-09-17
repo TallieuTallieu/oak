@@ -25,14 +25,14 @@ class Session
     /**
      * The session id
      *
-     * @var int
+     * @var string|null
      */
     private $id;
 
     /**
      * Data of the session
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private $data = [];
 
@@ -74,10 +74,23 @@ class Session
 
     /**
      * Loads the data
+     *
+     * @return void
      */
     private function loadData()
     {
-        $this->data = unserialize($this->handler->read($this->getId())) ?: [];
+        $id = $this->getId();
+
+        if ($id === null) {
+            $this->data = [];
+            $this->loaded = true;
+            return;
+        }
+
+        $contents = $this->handler->read($id);
+        $data = is_string($contents) ? unserialize($contents) : false;
+
+        $this->data = is_array($data) ? $data : [];
         $this->loaded = true;
     }
 
@@ -94,7 +107,7 @@ class Session
     /**
      * Gets the session id
      *
-     * @return mixed
+     * @return string|null
      */
     public function getId()
     {
@@ -104,7 +117,8 @@ class Session
     /**
      * Sets the session id
      *
-     * @param mixed $id
+     * @param string|null $id
+     * @return void
      */
     public function setId($id)
     {
@@ -114,12 +128,13 @@ class Session
     /**
      * Stores data for a given key
      *
-     * @param $key
-     * @param $data
+     * @param string $key
+     * @param mixed $data
+     * @return void
      */
     public function set($key, $data)
     {
-        if (! $this->loaded) {
+        if (!$this->loaded) {
             $this->loadData();
         }
         $this->data[$key] = $data;
@@ -129,24 +144,24 @@ class Session
     /**
      * Gets data for a given key
      *
-     * @param $key
-     * @return mixed|null
+     * @param string $key
+     * @return mixed
      */
     public function get($key)
     {
-        if (! $this->loaded) {
+        if (!$this->loaded) {
             $this->loadData();
         }
         return $this->data[$key] ?? null;
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @return bool
      */
     public function has($key)
     {
-        if (! $this->loaded) {
+        if (!$this->loaded) {
             $this->loadData();
         }
 
@@ -155,10 +170,12 @@ class Session
 
     /**
      * Saves the data in the session (using our handler)
+     *
+     * @return void
      */
     public function save()
     {
-        if (! $this->saved && $this->getId() !== null) {
+        if (!$this->saved && $this->getId() !== null) {
             $this->handler->write($this->getId(), serialize($this->data));
             $this->saved = true;
         }

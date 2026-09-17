@@ -53,7 +53,7 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     public function destroy($sessionId): bool
     {
-        $this->filesystem->delete($this->path.'/'.$sessionId);
+        $this->filesystem->delete($this->path . '/' . $sessionId);
 
         return true;
     }
@@ -62,26 +62,31 @@ class FileSessionHandler implements SessionHandlerInterface
      * Garbage collection
      *
      * @param int $max_lifetime
-     * @return int|false Number of deleted sessions or false on failure
+     * @return int Number of deleted sessions
      */
-    public function gc(int $max_lifetime): int|false
+    public function gc(int $max_lifetime): int
     {
         $now = time();
         $files = $this->filesystem->files($this->path);
+        $deleted = 0;
 
         foreach ($files as $filePath) {
-            if ($this->filesystem->modificationTime($filePath) + $max_lifetime < $now) {
+            if (
+                $this->filesystem->modificationTime($filePath) + $max_lifetime <
+                $now
+            ) {
                 $this->filesystem->delete($filePath);
+                $deleted++;
             }
         }
 
-        return true;
+        return $deleted;
     }
 
     /**
      * Session start
      *
-     * @param string $savePath
+     * @param string $path
      * @param string $name
      * @return bool
      */
@@ -98,8 +103,10 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     public function read($sessionId): string
     {
-        if ($this->filesystem->exists($this->path.'/'.$sessionId)) {
-            return $this->filesystem->get($this->path.'/'.$sessionId);
+        if ($this->filesystem->exists($this->path . '/' . $sessionId)) {
+            $contents = $this->filesystem->get($this->path . '/' . $sessionId);
+
+            return $contents === false ? '' : $contents;
         }
 
         return '';
@@ -114,7 +121,7 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     public function write($sessionId, $sessionData): bool
     {
-        $this->filesystem->put($this->path.'/'.$sessionId, $sessionData);
+        $this->filesystem->put($this->path . '/' . $sessionId, $sessionData);
 
         return true;
     }

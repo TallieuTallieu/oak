@@ -30,8 +30,11 @@ class Status extends Command
      * @param FilesystemInterface $filesystem
      * @param ContainerInterface $app
      */
-    public function __construct(FilesystemInterface $filesystem, RepositoryInterface $config, ContainerInterface $app)
-    {
+    public function __construct(
+        FilesystemInterface $filesystem,
+        RepositoryInterface $config,
+        ContainerInterface $app
+    ) {
         $this->filesystem = $filesystem;
         $this->config = $config;
 
@@ -46,8 +49,7 @@ class Status extends Command
     {
         return $signature
             ->setName('status')
-            ->setDescription('Show a status for the session system')
-            ;
+            ->setDescription('Show a status for the session system');
     }
 
     /**
@@ -56,9 +58,14 @@ class Status extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $sessionFiles = $this->filesystem->files(SessionPath::resolve($this->app, $this->config));
+        $sessionFiles = $this->filesystem->files(
+            SessionPath::resolve($this->app, $this->config)
+        );
 
         $output->writeLine('SESSION STATUS');
-        $output->writeLine('Active sessions: '.count($sessionFiles), OutputInterface::TYPE_INFO);
+        $output->writeLine(
+            'Active sessions: ' . count($sessionFiles),
+            OutputInterface::TYPE_INFO
+        );
     }
 }

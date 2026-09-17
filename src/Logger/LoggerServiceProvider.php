@@ -24,7 +24,8 @@ class LoggerServiceProvider extends ServiceProvider
         $app->whenAsksGive(
             FileLogger::class,
             'filename',
-            $app->get(RepositoryInterface::class)
+            $app
+                ->get(RepositoryInterface::class)
                 ->get('logger.filename', 'logs/log.txt')
         );
     }

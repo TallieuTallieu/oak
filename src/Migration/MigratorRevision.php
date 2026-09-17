@@ -96,11 +96,17 @@ class MigratorRevision implements RevisionInterface
         return new self($name, $toVersion, $fromVersion, $manager);
     }
 
+    /**
+     * @return void
+     */
     public function up()
     {
         $this->getMigrator()->rollTo($this->toVersion);
     }
 
+    /**
+     * @return void
+     */
     public function down()
     {
         $this->getMigrator()->rollTo($this->fromVersion);
@@ -127,7 +133,11 @@ class MigratorRevision implements RevisionInterface
      */
     private function getMigratorName(): string
     {
-        return $this->migratorName ?? $this->migrator->getName();
+        if ($this->migratorName !== null) {
+            return $this->migratorName;
+        }
+
+        return $this->getMigrator()->getName();
     }
 
     /**
@@ -136,6 +146,12 @@ class MigratorRevision implements RevisionInterface
     private function getMigrator(): Migrator
     {
         if (!$this->migrator) {
+            if ($this->migratorName === null || $this->manager === null) {
+                throw new RuntimeException(
+                    'No migrator or migrator name was provided'
+                );
+            }
+
             $this->migrator = $this->manager->getMigrator($this->migratorName);
 
             if (!$this->migrator) {

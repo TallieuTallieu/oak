@@ -40,8 +40,12 @@ class StartSession implements MiddlewareInterface
      * @param CookieInterface $cookie
      * @param SessionIdentifierInterface $sessionIdentifier
      */
-    public function __construct(RepositoryInterface $config, Session $session, CookieInterface $cookie, SessionIdentifierInterface $sessionIdentifier)
-    {
+    public function __construct(
+        RepositoryInterface $config,
+        Session $session,
+        CookieInterface $cookie,
+        SessionIdentifierInterface $sessionIdentifier
+    ) {
         $this->config = $config;
         $this->session = $session;
         $this->cookie = $cookie;
@@ -53,21 +57,33 @@ class StartSession implements MiddlewareInterface
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         // Set session cookie
-        $cookieName = $this->config->get('session.cookie_prefix', 'session').'_'.$this->session->getName();
+        $cookiePrefix = $this->config->get('session.cookie_prefix', 'session');
+        $cookiePrefix = is_string($cookiePrefix) ? $cookiePrefix : 'session';
 
-        if (! $this->cookie->has($cookieName)) {
+        $cookieName = $cookiePrefix . '_' . $this->session->getName();
 
+        if (!$this->cookie->has($cookieName)) {
             // No session id found, so we generate one
-            $sessionId = $this->sessionIdentifier->generate($this->config->get('session.identifier_length', 40));
+            $identifierLength = $this->config->get(
+                'session.identifier_length',
+                40
+            );
+
+            $sessionId = $this->sessionIdentifier->generate(
+                is_numeric($identifierLength) ? (int) $identifierLength : 40
+            );
 
             // Set the id in the cookie
             $this->cookie->set($cookieName, $sessionId);
         }
 
-        $this->session->setId($this->cookie->get($cookieName));
+        $sessionId = $this->cookie->get($cookieName);
+        $this->session->setId(is_string($sessionId) ? $sessionId : null);
 
         // Handle the response first
         $response = $handler->handle($request);

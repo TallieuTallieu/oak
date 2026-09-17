@@ -12,7 +12,6 @@ class Logger extends Command
         return $signature
             ->setName('logger')
             ->addSubCommand(View::class)
-            ->addSubCommand(Log::class)
-        ;
+            ->addSubCommand(Log::class);
     }
 }

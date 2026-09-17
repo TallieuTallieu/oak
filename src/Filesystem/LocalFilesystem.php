@@ -47,7 +47,9 @@ class LocalFilesystem implements FilesystemInterface
      */
     public function size(string $path): int
     {
-        return filesize($path);
+        $size = filesize($path);
+
+        return $size === false ? 0 : $size;
     }
 
     /**
@@ -58,7 +60,10 @@ class LocalFilesystem implements FilesystemInterface
      */
     public function mimetype(string $path): string
     {
-        return finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimetype = $finfo === false ? false : finfo_file($finfo, $path);
+
+        return $mimetype === false ? '' : $mimetype;
     }
 
     /**
@@ -69,14 +74,16 @@ class LocalFilesystem implements FilesystemInterface
      */
     public function modificationTime(string $path): int
     {
-        return filemtime($path);
+        $modificationTime = filemtime($path);
+
+        return $modificationTime === false ? 0 : $modificationTime;
     }
 
     /**
      * Gets the contents of the file at path
      *
      * @param string $path
-     * @return string
+     * @return string|false The file contents, or false when it could not be read
      */
     public function get(string $path)
     {
@@ -108,7 +115,7 @@ class LocalFilesystem implements FilesystemInterface
     public function prepend(string $path, $contents)
     {
         if ($this->exists($path)) {
-            $this->put($path, $contents.$this->get($path));
+            $this->put($path, $contents . $this->get($path));
             return;
         }
 
@@ -124,7 +131,7 @@ class LocalFilesystem implements FilesystemInterface
     public function append(string $path, $contents)
     {
         if ($this->exists($path)) {
-            $this->put($path, $this->get($path).$contents);
+            $this->put($path, $this->get($path) . $contents);
             return;
         }
 
@@ -178,21 +185,25 @@ class LocalFilesystem implements FilesystemInterface
      * Get all files in a directory
      *
      * @param string $path
-     * @return array
+     * @return array<int, string>
      */
     public function files(string $path): array
     {
-        return array_filter(glob($path.'/*'), 'is_file');
+        $paths = glob($path . '/*');
+
+        return $paths === false ? [] : array_filter($paths, 'is_file');
     }
 
     /**
      * Get all directories in a directory
      *
      * @param string $path
-     * @return array
+     * @return array<int, string>
      */
     public function directories(string $path): array
     {
-        return array_filter(glob($path.'/*'), 'is_dir');
+        $paths = glob($path . '/*');
+
+        return $paths === false ? [] : array_filter($paths, 'is_dir');
     }
 }

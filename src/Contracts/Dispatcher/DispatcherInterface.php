@@ -10,14 +10,14 @@ interface DispatcherInterface
 {
     /**
      * @param string $eventName
-     * @param callable $listener
+     * @param callable(EventInterface|null): void $listener
      * @return mixed
      */
     public function addListener(string $eventName, callable $listener);
 
     /**
      * @param string $eventName
-     * @return array
+     * @return array<int, callable(EventInterface|null): void>
      */
     public function getListeners(string $eventName): array;
 

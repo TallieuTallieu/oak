@@ -12,14 +12,14 @@ class MigrationManager
     private $app;
 
     /**
-     * @var array $migrators
+     * @var array<int, Migrator> $migrators
      */
     private $migrators = [];
 
     /**
      * Migrators that run when no specific migrator is targeted
      *
-     * @var array $autoRunMigrators
+     * @var array<int, Migrator> $autoRunMigrators
      */
     private $autoRunMigrators = [];
 
@@ -36,8 +36,9 @@ class MigrationManager
      * Adds a migrator. Pass $autoRun false for a migrator that should only
      * move when targeted explicitly or driven by a MigratorRevision.
      *
-     * @param $migrator
+     * @param Migrator|class-string<Migrator> $migrator
      * @param bool $autoRun
+     * @return void
      */
     public function addMigrator($migrator, bool $autoRun = true)
     {
@@ -53,7 +54,7 @@ class MigrationManager
     }
 
     /**
-     * @return array
+     * @return array<int, Migrator>
      */
     public function getMigrators(): array
     {
@@ -61,7 +62,7 @@ class MigrationManager
     }
 
     /**
-     * @return array
+     * @return array<int, Migrator>
      */
     public function getAutoRunMigrators(): array
     {

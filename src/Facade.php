@@ -6,10 +6,10 @@ use Oak\Contracts\Container\ContainerInterface;
 
 /**
  * Base Facade class providing static access to services in the container
- * 
+ *
  * Facades act as static proxies to underlying service instances, providing
  * a clean, expressive interface while maintaining the benefits of dependency injection.
- * 
+ *
  * @template T of object
  */
 abstract class Facade
@@ -34,7 +34,7 @@ abstract class Facade
 
     /**
      * Get the service contract/class name that this facade represents
-     * 
+     *
      * @return class-string<T> The fully qualified class name or interface
      */
     abstract protected static function getContract(): string;
@@ -47,7 +47,7 @@ abstract class Facade
      */
     final protected static function getInstance()
     {
-        if (! self::$container) {
+        if (!self::$container) {
             throw new \Exception('No container set for facades');
         }
 
@@ -56,11 +56,11 @@ abstract class Facade
 
     /**
      * Handle static method calls by forwarding them to the resolved service instance
-     * 
+     *
      * This magic method enables static access to instance methods on the underlying service.
-     * 
+     *
      * @param string $method The method name to call
-     * @param array $arguments The arguments to pass to the method
+     * @param array<int, mixed> $arguments The arguments to pass to the method
      * @return mixed The result of the method call
      * @throws \Exception When the service cannot be resolved or method doesn't exist
      */

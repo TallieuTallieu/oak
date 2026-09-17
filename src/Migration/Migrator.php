@@ -36,7 +36,7 @@ class Migrator
     /**
      * Array holding all revisions
      *
-     * @var array RevisionInterface[]
+     * @var array<int, RevisionInterface|class-string<RevisionInterface>>
      */
     private $revisions = [];
 
@@ -54,8 +54,12 @@ class Migrator
      * @param MigrationLoggerInterface $migrationLogger
      * @param ContainerInterface $app
      */
-    public function __construct(string $name, VersionStorageInterface $versionStorage, MigrationLoggerInterface $migrationLogger, ContainerInterface $app)
-    {
+    public function __construct(
+        string $name,
+        VersionStorageInterface $versionStorage,
+        MigrationLoggerInterface $migrationLogger,
+        ContainerInterface $app
+    ) {
         $this->name = $name;
         $this->versionStorage = $versionStorage;
         $this->migrationLogger = $migrationLogger;
@@ -84,7 +88,7 @@ class Migrator
     /**
      * Sets the revisions
      *
-     * @param array $revisions
+     * @param array<int, RevisionInterface|class-string<RevisionInterface>> $revisions
      */
     public function setRevisions(array $revisions): void
     {
@@ -95,6 +99,7 @@ class Migrator
     /**
      * Migrate all revisions
      *
+     * @return void
      */
     public function migrate()
     {
@@ -104,13 +109,16 @@ class Migrator
     /**
      * Updates to the next revision
      *
+     * @return void
      */
     public function update()
     {
-        $nextVersionNumber = $this->getClampedVersion($this->versionStorage->get($this)+1);
+        $nextVersionNumber = $this->getClampedVersion(
+            $this->versionStorage->get($this) + 1
+        );
         $nextRevision = $this->getRevisionByVersion($nextVersionNumber);
 
-        if (! $nextRevision || $this->isUpToDateWith($nextVersionNumber)) {
+        if (!$nextRevision || $this->isUpToDateWith($nextVersionNumber)) {
             return;
         }
 
@@ -123,12 +131,13 @@ class Migrator
     /**
      * Rolls back one version
      *
+     * @return void
      */
     public function downdate()
     {
         $revision = $this->getCurrentRevision();
 
-        if (! $revision) {
+        if (!$revision) {
             return;
         }
 
@@ -136,13 +145,16 @@ class Migrator
 
         $this->migrationLogger->logDowndate($revision);
 
-        $version = $this->getClampedVersion($this->versionStorage->get($this)-1);
+        $version = $this->getClampedVersion(
+            $this->versionStorage->get($this) - 1
+        );
         $this->versionStorage->store($this, $version);
     }
 
     /**
      * Undoes all revisions
      *
+     * @return void
      */
     public function reset()
     {
@@ -152,6 +164,7 @@ class Migrator
     /**
      * Resets the version counter to 0 without running any migrations
      *
+     * @return void
      */
     public function resetCounter()
     {
@@ -162,6 +175,7 @@ class Migrator
      * Rolls to a specific version
      *
      * @param int $version
+     * @return void
      */
     public function rollTo(int $version)
     {
@@ -217,7 +231,7 @@ class Migrator
      */
     private function isUpToDateWith(int $version): bool
     {
-        return ($this->versionStorage->get($this) === $version);
+        return $this->versionStorage->get($this) === $version;
     }
 
     /**
@@ -239,13 +253,12 @@ class Migrator
     {
         $version = $this->getClampedVersion($version);
 
-        if (isset($this->revisions[$version-1])) {
-
-            if (is_string($this->revisions[$version-1])) {
-                return $this->app->get($this->revisions[$version-1]);
+        if (isset($this->revisions[$version - 1])) {
+            if (is_string($this->revisions[$version - 1])) {
+                return $this->app->get($this->revisions[$version - 1]);
             }
 
-            return $this->revisions[$version-1];
+            return $this->revisions[$version - 1];
         }
 
         return null;

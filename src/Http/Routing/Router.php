@@ -37,8 +37,11 @@ class Router implements RouterInterface, MiddlewareRegisterInterface
      * @param RepositoryInterface $config
      * @param ResponseFactoryInterface $responseFactory
      */
-    public function __construct(ContainerInterface $app, RepositoryInterface $config, ResponseFactoryInterface $responseFactory)
-    {
+    public function __construct(
+        ContainerInterface $app,
+        RepositoryInterface $config,
+        ResponseFactoryInterface $responseFactory
+    ) {
         $this->app = $app;
         $this->config = $config;
         $this->responseFactory = $responseFactory;
@@ -50,7 +53,12 @@ class Router implements RouterInterface, MiddlewareRegisterInterface
      */
     public function dispatch(ServerRequestInterface $request): ResponseInterface
     {
-        $path = substr($request->getUri()->getPath(), strlen($this->config->get('http.path')));
+        $httpPath = $this->config->get('http.path');
+
+        $path = substr(
+            $request->getUri()->getPath(),
+            strlen(is_string($httpPath) ? $httpPath : '')
+        );
         $path = ltrim($path, '/');
 
         $method = $request->getMethod();
@@ -58,8 +66,12 @@ class Router implements RouterInterface, MiddlewareRegisterInterface
 
         foreach ($routes as $route) {
             if ($route->matches($path)) {
-                return $route->execute($this->app, $request, $this->responseFactory->createResponse(200)
-                    ->withHeader('Content-Type', 'text/html')
+                return $route->execute(
+                    $this->app,
+                    $request,
+                    $this->responseFactory
+                        ->createResponse(200)
+                        ->withHeader('Content-Type', 'text/html')
                 );
             }
         }

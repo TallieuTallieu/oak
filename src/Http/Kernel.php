@@ -24,8 +24,10 @@ class Kernel implements KernelInterface
      * @param RouterInterface $router
      * @param ResponseEmitterInterface $responseEmitter
      */
-    public function __construct(RouterInterface $router, ResponseEmitterInterface $responseEmitter)
-    {
+    public function __construct(
+        RouterInterface $router,
+        ResponseEmitterInterface $responseEmitter
+    ) {
         $this->router = $router;
         $this->responseEmitter = $responseEmitter;
     }
@@ -35,8 +37,6 @@ class Kernel implements KernelInterface
      */
     public function handle(ServerRequestInterface $request)
     {
-        $this->responseEmitter->emit(
-            $this->router->dispatch($request)
-        );
+        $this->responseEmitter->emit($this->router->dispatch($request));
     }
 }

@@ -22,8 +22,10 @@ class Log extends Command
      * @param LoggerInterface $logger
      * @param ContainerInterface $app
      */
-    public function __construct(LoggerInterface $logger, ContainerInterface $app)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        ContainerInterface $app
+    ) {
         $this->logger = $logger;
 
         parent::__construct($app);
@@ -38,8 +40,11 @@ class Log extends Command
         return $signature
             ->setName('log')
             ->setDescription('Write a message to the log')
-            ->addArgument(Argument::create('message')->setDescription('The message to log'))
-            ;
+            ->addArgument(
+                Argument::create('message')->setDescription(
+                    'The message to log'
+                )
+            );
     }
 
     /**
@@ -48,7 +53,8 @@ class Log extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->logger->log($input->getArgument('message'));
+        $message = $input->getArgument('message');
+        $this->logger->log(is_scalar($message) ? (string) $message : '');
         $output->writeLine('Message logged', OutputInterface::TYPE_INFO);
     }
 }

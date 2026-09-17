@@ -10,6 +10,33 @@ Cyan=\033[0;36m
 Orange=\033[0;33m
 NC=\033[0m
 
+## HELP ##
+help:
+	@echo "$(Cyan)Available commands:$(NC)"
+	@echo ""
+	@echo "$(Yellow)Docker:$(NC)"
+	@echo "  docker-init    - Initialize Docker if not running"
+	@echo "  docker         - Start Docker containers"
+	@echo "  docker-exec    - Execute bash in oak-dev container"
+	@echo ""
+	@echo "$(Yellow)Yarn:$(NC)"
+	@echo "  yarn-format    - Format all files with Prettier"
+	@echo "  yarn-install   - Install yarn dependencies"
+	@echo ""
+	@echo "$(Yellow)Testing:$(NC)"
+	@echo "  test           - Run all tests"
+	@echo "  test-verbose   - Run tests with verbose output"
+	@echo "  test-coverage  - Run tests with coverage report"
+	@echo ""
+	@echo "$(Yellow)Code Quality:$(NC)"
+	@echo "  phpstan        - Run PHPStan static analysis"
+	@echo ""
+	@echo "$(Yellow)Documentation:$(NC)"
+	@echo "  sync-docs      - Sync docs/ to Obsidian vault"
+	@echo ""
+	@echo "  help           - Show this help message"
+.PHONY: help
+
 ## DOCKER ##
 docker-init:
 	@if ! docker info >/dev/null 2>&1; then \
@@ -29,13 +56,43 @@ docker: docker-init
 	@if [ -z "$$(docker compose ps -q oak-dev)" ]; then \
 		docker compose up -d --build; \
 		else \
-		echo "dry-dev is running."; \
+		echo "oak-dev is running."; \
 		fi
 .PHONY: docker
 
 docker-exec: docker
 	docker compose exec oak-dev bash
 .PHONY: docker-exec
+
+## YARN ##
+
+yarn-format: docker
+	docker compose exec -T oak-dev yarn format
+.PHONY: yarn-format
+
+yarn-install: docker
+	docker compose exec -T oak-dev yarn
+.PHONY: yarn-install
+
+## TESTING ##
+
+test: docker
+	docker compose exec -T oak-dev ./vendor/bin/pest
+.PHONY: test
+
+test-verbose: docker
+	docker compose exec -T oak-dev ./vendor/bin/pest -v
+.PHONY: test-verbose
+
+test-coverage: docker
+	docker compose exec -T oak-dev ./vendor/bin/pest --coverage
+.PHONY: test-coverage
+
+## CODE QUALITY ##
+
+phpstan: docker
+	docker compose exec -T oak-dev composer phpstan
+.PHONY: phpstan
 
 ## DOCUMENTATION SYNC ##
 

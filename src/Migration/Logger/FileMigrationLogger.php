@@ -40,6 +40,7 @@ class FileMigrationLogger implements MigrationLoggerInterface
      * Log a message
      *
      * @param string $message
+     * @return void
      */
     private function log(string $message)
     {

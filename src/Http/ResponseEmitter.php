@@ -16,15 +16,16 @@ class ResponseEmitter implements ResponseEmitterInterface
     {
         $response->getBody()->rewind();
 
-        if (! headers_sent()) {
-
+        if (!headers_sent()) {
             // Status
-            header(sprintf(
-                'HTTP/%s %s %s',
-                $response->getProtocolVersion(),
-                $response->getStatusCode(),
-                $response->getReasonPhrase()
-            ));
+            header(
+                sprintf(
+                    'HTTP/%s %s %s',
+                    $response->getProtocolVersion(),
+                    $response->getStatusCode(),
+                    $response->getReasonPhrase()
+                )
+            );
 
             // Headers
             foreach ($response->getHeaders() as $name => $values) {

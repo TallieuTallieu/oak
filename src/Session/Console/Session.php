@@ -13,7 +13,6 @@ class Session extends Command
             ->setName('session')
             ->addSubCommand(Status::class)
             ->addSubCommand(GarbageCollect::class)
-            ->addSubCommand(ClearAll::class)
-        ;
+            ->addSubCommand(ClearAll::class);
     }
 }

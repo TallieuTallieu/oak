@@ -46,40 +46,40 @@ interface FilesystemInterface
 
     /**
      * @param string $path
-     * @return mixed
+     * @return string|false The file contents, or false when it could not be read
      */
     public function get(string $path);
 
     /**
      * @param string $path
-     * @param $contents
+     * @param string $contents
      * @return mixed
      */
     public function put(string $path, $contents);
 
     /**
      * @param string $path
-     * @param $contents
+     * @param string $contents
      * @return mixed
      */
     public function prepend(string $path, $contents);
 
     /**
      * @param string $path
-     * @param $contents
+     * @param string $contents
      * @return mixed
      */
     public function append(string $path, $contents);
 
     /**
      * @param string $path
-     * @return array
+     * @return array<int, string>
      */
     public function files(string $path): array;
 
     /**
      * @param string $path
-     * @return array
+     * @return array<int, string>
      */
     public function directories(string $path): array;
 

@@ -28,8 +28,11 @@ class ClearCache extends Command
      * @param FilesystemInterface $filesystem
      * @param ContainerInterface $app
      */
-    public function __construct(RepositoryInterface $config, FilesystemInterface $filesystem, ContainerInterface $app)
-    {
+    public function __construct(
+        RepositoryInterface $config,
+        FilesystemInterface $filesystem,
+        ContainerInterface $app
+    ) {
         $this->config = $config;
         $this->filesystem = $filesystem;
 
@@ -40,13 +43,16 @@ class ClearCache extends Command
     {
         return $signature
             ->setName('clear-cache')
-            ->setDescription('Clear the config cache')
-            ;
+            ->setDescription('Clear the config cache');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->filesystem->delete($this->config->get('app.cache_path').'config.php');
+        $cachePath = $this->config->get('app.cache_path');
+
+        $this->filesystem->delete(
+            (is_string($cachePath) ? $cachePath : '') . 'config.php'
+        );
         $output->writeLine('Config cache cleared');
     }
 }

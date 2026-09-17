@@ -18,23 +18,34 @@ class MigrationServiceProvider extends ServiceProvider
     public function register(ContainerInterface $app)
     {
         if ($app->isRunningInConsole()) {
-
             $app->set(MigrationCommand::class, MigrationCommand::class);
 
             $app->singleton(MigrationManager::class, MigrationManager::class);
             $app->set(Migrator::class, Migrator::class);
-            $app->set(MigrationLoggerInterface::class, ConsoleMigrationLogger::class);
-            $app->set(VersionStorageInterface::class, JsonVersionStorage::class);
-            $app->whenAsksGive(JsonVersionStorage::class, 'filename', $app->get(RepositoryInterface::class)->get('migration.version_filename'));
+            $app->set(
+                MigrationLoggerInterface::class,
+                ConsoleMigrationLogger::class
+            );
+            $app->set(
+                VersionStorageInterface::class,
+                JsonVersionStorage::class
+            );
+            $app->whenAsksGive(
+                JsonVersionStorage::class,
+                'filename',
+                $app
+                    ->get(RepositoryInterface::class)
+                    ->get('migration.version_filename')
+            );
         }
     }
 
     public function boot(ContainerInterface $app)
     {
         if ($app->isRunningInConsole()) {
-            $app->get(KernelInterface::class)
-                ->registerCommand(MigrationCommand::class)
-            ;
+            $app->get(KernelInterface::class)->registerCommand(
+                MigrationCommand::class
+            );
         }
     }
 }

@@ -23,9 +23,9 @@ class SchedulerServiceProvider extends ServiceProvider
     public function boot(ContainerInterface $app)
     {
         if ($app->isRunningInConsole()) {
-            $app->get(KernelInterface::class)
-                ->registerCommand(SchedulerCommand::class)
-            ;
+            $app->get(KernelInterface::class)->registerCommand(
+                SchedulerCommand::class
+            );
         }
     }
 }

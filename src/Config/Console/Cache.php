@@ -28,8 +28,11 @@ class Cache extends Command
      * @param FilesystemInterface $filesystem
      * @param ContainerInterface $app
      */
-    public function __construct(RepositoryInterface $config, FilesystemInterface $filesystem, ContainerInterface $app)
-    {
+    public function __construct(
+        RepositoryInterface $config,
+        FilesystemInterface $filesystem,
+        ContainerInterface $app
+    ) {
         $this->config = $config;
         $this->filesystem = $filesystem;
 
@@ -42,10 +45,7 @@ class Cache extends Command
      */
     protected function createSignature(Signature $signature): Signature
     {
-        return $signature
-            ->setName('cache')
-            ->setDescription('Cache the config')
-        ;
+        return $signature->setName('cache')->setDescription('Cache the config');
     }
 
     /**
@@ -54,7 +54,15 @@ class Cache extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->filesystem->put($this->config->get('app.cache_path').'config.php', '<?php return '.var_export($this->config->all(), true).';'.PHP_EOL);
+        $cachePath = $this->config->get('app.cache_path');
+
+        $this->filesystem->put(
+            (is_string($cachePath) ? $cachePath : '') . 'config.php',
+            '<?php return ' .
+                var_export($this->config->all(), true) .
+                ';' .
+                PHP_EOL
+        );
         $output->writeLine('Config cached');
     }
 }

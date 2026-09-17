@@ -6,19 +6,19 @@ interface RepositoryInterface
 {
     /**
      * RepositoryInterface constructor.
-     * @param array $config
+     * @param array<string, mixed> $config
      */
     public function __construct(array $config = []);
 
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      * @return mixed
      */
     public function setAll(array $config = []);
 
     /**
      * @param string $key
-     * @param null $default
+     * @param mixed $default
      * @return mixed
      */
     public function get(string $key, $default = null);
@@ -31,13 +31,13 @@ interface RepositoryInterface
 
     /**
      * @param string $key
-     * @param $value
+     * @param mixed $value
      * @return mixed
      */
     public function set(string $key, $value);
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function all(): array;
 }

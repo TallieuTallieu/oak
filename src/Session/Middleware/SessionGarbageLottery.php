@@ -37,13 +37,20 @@ class SessionGarbageLottery implements MiddlewareInterface
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         // Garbage collection lottery
-        if (rand(0, $this->config->get('session.lottery', 200)) === 1) {
-            $this->session->getHandler()
-                ->gc($this->config->get('session.max_lifetime', 1000))
-            ;
+        $lottery = $this->config->get('session.lottery', 200);
+        $lottery = is_numeric($lottery) ? (int) $lottery : 200;
+
+        if (rand(0, $lottery) === 1) {
+            $maxLifetime = $this->config->get('session.max_lifetime', 1000);
+
+            $this->session
+                ->getHandler()
+                ->gc(is_numeric($maxLifetime) ? (int) $maxLifetime : 1000);
         }
 
         return $handler->handle($request);

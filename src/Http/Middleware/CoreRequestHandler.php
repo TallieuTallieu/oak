@@ -21,18 +21,21 @@ class CoreRequestHandler implements RequestHandlerInterface
     private $method;
 
     /**
-     * @var array $params
+     * @var array<int|string, mixed> $params
      */
     private $params;
 
     /**
      * CoreRequestHandler constructor.
-     * @param $controller
+     * @param BaseController $controller
      * @param string $method
-     * @param array $params
+     * @param array<int|string, mixed> $params
      */
-    public function __construct(BaseController $controller, string $method, array $params = [])
-    {
+    public function __construct(
+        BaseController $controller,
+        string $method,
+        array $params = []
+    ) {
         $this->controller = $controller;
         $this->method = $method;
         $this->params = $params;
@@ -44,11 +47,22 @@ class CoreRequestHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $output = call_user_func_array([$this->controller, $this->method,], $this->params);
+        $callback = [$this->controller, $this->method];
+
+        if (!is_callable($callback)) {
+            throw new \BadMethodCallException(
+                'Controller method ' .
+                    get_class($this->controller) .
+                    '::' .
+                    $this->method .
+                    ' is not callable'
+            );
+        }
+
+        $output = call_user_func_array($callback, $this->params);
 
         // Check if we already have a response
         if ($output instanceof ResponseInterface) {
-
             // It's already a response, return it
             return $output;
         }
@@ -57,7 +71,13 @@ class CoreRequestHandler implements RequestHandlerInterface
         $response = $this->controller->getResponse();
 
         // ...and write to its body
-        $response->getBody()->write($output);
+        $body = '';
+
+        if (is_scalar($output) || $output instanceof \Stringable) {
+            $body = (string) $output;
+        }
+
+        $response->getBody()->write($body);
 
         return $response;
     }

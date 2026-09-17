@@ -27,8 +27,10 @@ class FileVersionStorage implements VersionStorageInterface
      * @param FilesystemInterface $filesystem
      * @param string $filename
      */
-    public function __construct(FilesystemInterface $filesystem, string $filename)
-    {
+    public function __construct(
+        FilesystemInterface $filesystem,
+        string $filename
+    ) {
         $this->filesystem = $filesystem;
         $this->filename = $filename;
     }
@@ -39,7 +41,7 @@ class FileVersionStorage implements VersionStorageInterface
      */
     public function store(Migrator $migrator, int $version)
     {
-        $this->filesystem->put($this->filename, $version);
+        $this->filesystem->put($this->filename, (string) $version);
     }
 
     /**

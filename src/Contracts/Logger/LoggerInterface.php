@@ -10,6 +10,7 @@ interface LoggerInterface
 {
     /**
      * @param string $text
+     * @return void
      */
     public function log(string $text);
 }

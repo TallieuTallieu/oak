@@ -15,33 +15,33 @@ class Container implements ContainerInterface
     /**
      * All stored contracts and their implementations
      *
-     * @var array
+     * @var array<string, object|callable(ContainerInterface): object|string>
      */
     private $contracts = [];
 
     /**
      * Array of contracts we wish to use as singletons
      *
-     * @var array
+     * @var array<int, string>
      */
     private $singletons = [];
 
     /**
      * Instances of contracts for singleton use
      *
-     * @var array
+     * @var array<string, object>
      */
     private $instances = [];
 
     /**
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     private $arguments = [];
 
     /**
      * @template T of object
      * @param class-string<T>|string $contract
-     * @param T|callable|string $implementation
+     * @param T|callable(ContainerInterface): T|class-string<T>|string $implementation
      * @return void
      */
     public function set(string $contract, $implementation)
@@ -65,7 +65,7 @@ class Container implements ContainerInterface
      *
      * @template T of object
      * @param class-string<T>|string $contract
-     * @param T|callable|string $implementation
+     * @param T|callable(ContainerInterface): T|class-string<T>|string $implementation
      * @return void
      */
     public function singleton(string $contract, $implementation)
@@ -93,7 +93,7 @@ class Container implements ContainerInterface
      *
      * @template T of object
      * @param class-string<T>|string $contract
-     * @return T
+     * @return ($contract is class-string<T> ? T : object)
      * @throws \Exception
      */
     public function get(string $contract)
@@ -134,8 +134,8 @@ class Container implements ContainerInterface
     /**
      * @template T of object
      * @param class-string<T>|string $contract
-     * @param array $arguments
-     * @return T
+     * @param array<string, mixed> $arguments
+     * @return ($contract is class-string<T> ? T : object)
      * @throws Exception
      */
     public function getWith(string $contract, array $arguments)
@@ -145,8 +145,8 @@ class Container implements ContainerInterface
 
     /**
      * @param string $contract
-     * @param array $arguments
-     * @return mixed|object
+     * @param array<string, mixed> $arguments
+     * @return object
      * @throws \ReflectionException
      */
     private function create(string $contract, array $arguments = [])
@@ -180,6 +180,12 @@ class Container implements ContainerInterface
             return call_user_func($implementation, $this);
         }
 
+        if (is_string($implementation) && !class_exists($implementation)) {
+            throw new Exception(
+                'Could not create dependency with contract: ' . $contract
+            );
+        }
+
         $reflect = new ReflectionClass($implementation);
         $constructor = $reflect->getConstructor();
 
@@ -196,10 +202,23 @@ class Container implements ContainerInterface
         $injections = [];
 
         foreach ($parameters as $parameter) {
-            $class =
-                $parameter->getType() && !$parameter->getType()->isBuiltin()
-                    ? new ReflectionClass($parameter->getType()->getName())
-                    : null;
+            $type = $parameter->getType();
+            $class = null;
+
+            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                $typeName = $type->getName();
+
+                if (!class_exists($typeName) && !interface_exists($typeName)) {
+                    throw new Exception(
+                        'Could not provide argument "' .
+                            $parameter->getName() .
+                            '" to ' .
+                            $contract
+                    );
+                }
+
+                $class = new ReflectionClass($typeName);
+            }
 
             // Check if param is a class
             if ($class) {

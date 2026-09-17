@@ -13,6 +13,7 @@ class ConsoleInput extends Input
 {
     /**
      * @param Signature $signature
+     * @return void
      */
     public function setSignature(Signature $signature)
     {
@@ -23,21 +24,34 @@ class ConsoleInput extends Input
 
     /**
      * Reset the state of the input
+     *
+     * @return void
      */
     private function reset()
     {
-        $this->subCommand = [];
+        $this->subCommand = null;
         $this->arguments = [];
         $this->missingArguments = [];
     }
 
     /**
      * Parse the input from the argv globals
+     *
+     * @return void
      */
     private function parse()
     {
-        if (! $this->rawArguments) {
-            $this->rawArguments = $GLOBALS['argv'];
+        if (!$this->rawArguments) {
+            $argv =
+                isset($GLOBALS['argv']) && is_array($GLOBALS['argv'])
+                    ? $GLOBALS['argv']
+                    : [];
+
+            $this->rawArguments = array_values(
+                array_filter($argv, static function ($argument) {
+                    return is_string($argument);
+                })
+            );
         }
 
         array_shift($this->rawArguments);
@@ -46,12 +60,15 @@ class ConsoleInput extends Input
     }
 
     /**
+     * @return void
      * @throws InvalidArgumentException
      */
     public function validate()
     {
         if (count($this->missingArguments)) {
-            throw new InvalidArgumentException('Missing argument(s) '.implode(', ', $this->missingArguments));
+            throw new InvalidArgumentException(
+                'Missing argument(s) ' . implode(', ', $this->missingArguments)
+            );
         }
     }
 }

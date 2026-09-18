@@ -56,7 +56,7 @@ test('stopping propagation halts later listeners', function () {
     $calls = [];
 
     $dispatcher->addListener('created', function (?EventInterface $event) use (
-        &$calls
+        &$calls,
     ) {
         $calls[] = 'first';
         $event?->stopPropagation();

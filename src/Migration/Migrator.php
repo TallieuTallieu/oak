@@ -58,7 +58,7 @@ class Migrator
         string $name,
         VersionStorageInterface $versionStorage,
         MigrationLoggerInterface $migrationLogger,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->name = $name;
         $this->versionStorage = $versionStorage;
@@ -114,7 +114,7 @@ class Migrator
     public function update()
     {
         $nextVersionNumber = $this->getClampedVersion(
-            $this->versionStorage->get($this) + 1
+            $this->versionStorage->get($this) + 1,
         );
         $nextRevision = $this->getRevisionByVersion($nextVersionNumber);
 
@@ -146,7 +146,7 @@ class Migrator
         $this->migrationLogger->logDowndate($revision);
 
         $version = $this->getClampedVersion(
-            $this->versionStorage->get($this) - 1
+            $this->versionStorage->get($this) - 1,
         );
         $this->versionStorage->store($this, $version);
     }

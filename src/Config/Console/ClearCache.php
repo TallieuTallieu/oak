@@ -31,7 +31,7 @@ class ClearCache extends Command
     public function __construct(
         RepositoryInterface $config,
         FilesystemInterface $filesystem,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->config = $config;
         $this->filesystem = $filesystem;
@@ -51,7 +51,7 @@ class ClearCache extends Command
         $cachePath = $this->config->get('app.cache_path');
 
         $this->filesystem->delete(
-            (is_string($cachePath) ? $cachePath : '') . 'config.php'
+            (is_string($cachePath) ? $cachePath : '') . 'config.php',
         );
         $output->writeLine('Config cache cleared');
     }

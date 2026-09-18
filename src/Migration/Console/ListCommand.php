@@ -23,7 +23,7 @@ class ListCommand extends Command
      */
     public function __construct(
         MigrationManager $manager,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->manager = $manager;
         parent::__construct($app);
@@ -39,7 +39,7 @@ class ListCommand extends Command
         if (!count($this->manager->getMigrators())) {
             $output->writeLine(
                 'No migrators registered',
-                OutputInterface::TYPE_ERROR
+                OutputInterface::TYPE_ERROR,
             );
             return;
         }
@@ -51,7 +51,7 @@ class ListCommand extends Command
                     $migrator->getVersion() .
                     '/' .
                     $migrator->getMaxVersion() .
-                    ')'
+                    ')',
             );
         }
     }

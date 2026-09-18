@@ -44,7 +44,7 @@ class Cookie implements CookieInterface
 
         if ($value === false) {
             throw new \InvalidArgumentException(
-                'Cookie value could not be encoded as JSON'
+                'Cookie value could not be encoded as JSON',
             );
         }
 
@@ -55,7 +55,7 @@ class Cookie implements CookieInterface
             $this->path,
             '',
             $this->secure,
-            $this->httpOnly
+            $this->httpOnly,
         );
         $_COOKIE[$name] = $value;
     }

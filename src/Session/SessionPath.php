@@ -9,7 +9,7 @@ class SessionPath
 {
     public static function resolve(
         ContainerInterface $app,
-        RepositoryInterface $config
+        RepositoryInterface $config,
     ): string {
         $path = $config->get('session.path', 'sessions');
         $path = is_string($path) ? $path : 'sessions';

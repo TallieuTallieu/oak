@@ -23,7 +23,7 @@ class SchedulerCommand extends Command
      */
     public function __construct(
         SchedulerInterface $scheduler,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->scheduler = $scheduler;
 

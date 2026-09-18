@@ -24,7 +24,7 @@ class Directories extends Command
      */
     public function __construct(
         FilesystemInterface $filesystem,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->filesystem = $filesystem;
 
@@ -42,8 +42,8 @@ class Directories extends Command
             ->setDescription('List all directories in a directory')
             ->addArgument(
                 Argument::create('directory')->setDescription(
-                    'Directory to list directories from'
-                )
+                    'Directory to list directories from',
+                ),
             );
     }
 
@@ -55,7 +55,7 @@ class Directories extends Command
     {
         $directory = $input->getArgument('directory');
         $directories = $this->filesystem->directories(
-            is_scalar($directory) ? (string) $directory : ''
+            is_scalar($directory) ? (string) $directory : '',
         );
 
         foreach ($directories as $directory) {

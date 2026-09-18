@@ -36,8 +36,8 @@ class GarbageCollect extends Command
             ->setDescription('Garbage collect all sessions')
             ->addArgument(
                 Argument::create('maxLifetime')->setDescription(
-                    'Max lifetime in seconds'
-                )
+                    'Max lifetime in seconds',
+                ),
             );
     }
 

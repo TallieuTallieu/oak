@@ -19,7 +19,7 @@ class CookieServiceProvider extends ServiceProvider
     public function register(ContainerInterface $app)
     {
         $app->singleton(CookieInterface::class, function (
-            ContainerInterface $app
+            ContainerInterface $app,
         ) {
             $config = $app->get(RepositoryInterface::class);
 
@@ -28,7 +28,7 @@ class CookieServiceProvider extends ServiceProvider
             return new Cookie(
                 is_string($path) ? $path : '/',
                 (bool) $config->get('cookie.secure', false),
-                (bool) $config->get('cookie.http_only', true)
+                (bool) $config->get('cookie.http_only', true),
             );
         });
     }

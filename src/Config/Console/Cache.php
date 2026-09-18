@@ -31,7 +31,7 @@ class Cache extends Command
     public function __construct(
         RepositoryInterface $config,
         FilesystemInterface $filesystem,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->config = $config;
         $this->filesystem = $filesystem;
@@ -61,7 +61,7 @@ class Cache extends Command
             '<?php return ' .
                 var_export($this->config->all(), true) .
                 ';' .
-                PHP_EOL
+                PHP_EOL,
         );
         $output->writeLine('Config cached');
     }

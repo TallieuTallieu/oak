@@ -43,7 +43,7 @@ abstract class Command
      * @return Signature
      */
     abstract protected function createSignature(
-        Signature $signature
+        Signature $signature,
     ): Signature;
 
     /**
@@ -98,8 +98,8 @@ abstract class Command
 
         $signature->addOption(
             Option::create('help', 'h')->setDescription(
-                'Display the help message'
-            )
+                'Display the help message',
+            ),
         );
 
         $this->signature = $this->createSignature($signature);
@@ -162,7 +162,7 @@ abstract class Command
         if ($this->getDescription()) {
             $output->writeLine(
                 ucfirst($this->getName()) . ':',
-                OutputInterface::TYPE_WARNING
+                OutputInterface::TYPE_WARNING,
             );
             $output->writeLine($this->getDescription());
         }
@@ -198,17 +198,17 @@ abstract class Command
         if (count($commands)) {
             $output->writeLine(
                 'Available commands:',
-                OutputInterface::TYPE_WARNING
+                OutputInterface::TYPE_WARNING,
             );
 
             foreach ($commands as $command) {
                 $output->write(
                     str_pad($command->getName(), 20),
-                    OutputInterface::TYPE_INFO
+                    OutputInterface::TYPE_INFO,
                 );
                 $output->write(
                     $command->getDescription(),
-                    OutputInterface::TYPE_INFO
+                    OutputInterface::TYPE_INFO,
                 );
                 $output->newline();
 
@@ -218,7 +218,7 @@ abstract class Command
                 foreach ($subCommands as $subCommand) {
                     $output->write(
                         ' ' . str_pad($subCommand->getName(), 19),
-                        OutputInterface::TYPE_PLAIN
+                        OutputInterface::TYPE_PLAIN,
                     );
                     $output->write($subCommand->getDescription());
                     $output->newline();
@@ -235,7 +235,7 @@ abstract class Command
             foreach ($arguments as $argument) {
                 $output->write(
                     str_pad($argument->getName(), 20),
-                    OutputInterface::TYPE_INFO
+                    OutputInterface::TYPE_INFO,
                 );
                 $output->write($argument->getDescription());
                 $output->newline();
@@ -252,9 +252,9 @@ abstract class Command
                 $output->write(
                     str_pad(
                         '-' . $option->getAlias() . ', --' . $option->getName(),
-                        20
+                        20,
                     ),
-                    OutputInterface::TYPE_INFO
+                    OutputInterface::TYPE_INFO,
                 );
                 $output->write($option->getDescription());
                 $output->newline();

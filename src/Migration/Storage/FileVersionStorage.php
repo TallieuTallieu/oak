@@ -29,7 +29,7 @@ class FileVersionStorage implements VersionStorageInterface
      */
     public function __construct(
         FilesystemInterface $filesystem,
-        string $filename
+        string $filename,
     ) {
         $this->filesystem = $filesystem;
         $this->filename = $filename;

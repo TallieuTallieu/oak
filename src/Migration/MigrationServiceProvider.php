@@ -24,18 +24,18 @@ class MigrationServiceProvider extends ServiceProvider
             $app->set(Migrator::class, Migrator::class);
             $app->set(
                 MigrationLoggerInterface::class,
-                ConsoleMigrationLogger::class
+                ConsoleMigrationLogger::class,
             );
             $app->set(
                 VersionStorageInterface::class,
-                JsonVersionStorage::class
+                JsonVersionStorage::class,
             );
             $app->whenAsksGive(
                 JsonVersionStorage::class,
                 'filename',
                 $app
                     ->get(RepositoryInterface::class)
-                    ->get('migration.version_filename')
+                    ->get('migration.version_filename'),
             );
         }
     }
@@ -44,7 +44,7 @@ class MigrationServiceProvider extends ServiceProvider
     {
         if ($app->isRunningInConsole()) {
             $app->get(KernelInterface::class)->registerCommand(
-                MigrationCommand::class
+                MigrationCommand::class,
             );
         }
     }

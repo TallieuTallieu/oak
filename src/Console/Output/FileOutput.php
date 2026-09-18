@@ -27,7 +27,7 @@ class FileOutput implements OutputInterface
      */
     public function __construct(
         string $filename,
-        FilesystemInterface $filesystem
+        FilesystemInterface $filesystem,
     ) {
         $this->filename = $filename;
         $this->filesystem = $filesystem;

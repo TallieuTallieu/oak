@@ -139,7 +139,7 @@ class Signature
      */
     public function addSubCommand($command)
     {
-        if (!$command instanceof Command) {
+        if (!($command instanceof Command)) {
             $command = $this->app->get($command);
         }
 

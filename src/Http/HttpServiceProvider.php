@@ -32,27 +32,27 @@ class HttpServiceProvider extends ServiceProvider
         $app->set(ResponseFactoryInterface::class, Psr17Factory::class);
         $app->set(StreamFactoryInterface::class, Psr17Factory::class);
         $app->set(ServerRequestInterface::class, function (
-            ContainerInterface $app
+            ContainerInterface $app,
         ) {
             $psr17Factory = $app->get(ResponseFactoryInterface::class);
 
             if (
-                !$psr17Factory instanceof ServerRequestFactoryInterface ||
-                !$psr17Factory instanceof UriFactoryInterface ||
-                !$psr17Factory instanceof UploadedFileFactoryInterface ||
-                !$psr17Factory instanceof StreamFactoryInterface
+                !($psr17Factory instanceof ServerRequestFactoryInterface) ||
+                !($psr17Factory instanceof UriFactoryInterface) ||
+                !($psr17Factory instanceof UploadedFileFactoryInterface) ||
+                !($psr17Factory instanceof StreamFactoryInterface)
             ) {
                 throw new \RuntimeException(
-                    'The bound ResponseFactoryInterface must also implement the PSR-17 server request, uri, uploaded file and stream factory interfaces'
+                    'The bound ResponseFactoryInterface must also implement the PSR-17 server request, uri, uploaded file and stream factory interfaces',
                 );
             }
 
-            return (new ServerRequestCreator(
+            return new ServerRequestCreator(
                 $psr17Factory, // ServerRequestFactory
                 $psr17Factory, // UriFactory
                 $psr17Factory, // UploadedFileFactory
-                $psr17Factory // StreamFactory
-            ))->fromGlobals();
+                $psr17Factory, // StreamFactory
+            )->fromGlobals();
         });
     }
 }

@@ -53,7 +53,7 @@ class Route
         MiddlewareRegisterInterface $middlewareRegister,
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ) {
         $this->middlewareRegister = $middlewareRegister;
         $this->pattern = $pattern;
@@ -82,7 +82,7 @@ class Route
                 function ($key) {
                     return !is_int($key);
                 },
-                ARRAY_FILTER_USE_KEY
+                ARRAY_FILTER_USE_KEY,
             );
 
             return true;
@@ -100,7 +100,7 @@ class Route
     public function execute(
         ContainerInterface $app,
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface $response,
     ): ResponseInterface {
         $middleware = [];
         foreach ($this->middleware as $middlewareName) {
@@ -129,7 +129,7 @@ class Route
 
         $nextRequestHandler = new NextRequestHandler(
             $middlewareStack,
-            $coreRequestHandler
+            $coreRequestHandler,
         );
 
         return $nextRequestHandler->handle($request);

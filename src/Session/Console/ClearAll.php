@@ -38,7 +38,7 @@ class ClearAll extends Command
         Session $session,
         FilesystemInterface $filesystem,
         RepositoryInterface $config,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->session = $session;
         $this->filesystem = $filesystem;
@@ -67,7 +67,7 @@ class ClearAll extends Command
         $sessionHandler = $this->session->getHandler();
 
         $sessions = $this->filesystem->files(
-            SessionPath::resolve($this->app, $this->config)
+            SessionPath::resolve($this->app, $this->config),
         );
 
         foreach ($sessions as $session) {

@@ -10,7 +10,7 @@ class MiddlewareRegisterTestMiddlewareA implements MiddlewareInterface
 {
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         return $handler->handle($request);
     }

@@ -18,23 +18,23 @@ class SessionServiceProvider extends ServiceProvider
 
         $app->singleton(
             \SessionHandlerInterface::class,
-            is_string($handler) ? $handler : FileSessionHandler::class
+            is_string($handler) ? $handler : FileSessionHandler::class,
         );
         $app->singleton(Session::class, Session::class);
         $app->singleton(
             SessionIdentifierInterface::class,
-            SessionIdentifier::class
+            SessionIdentifier::class,
         );
 
         $app->whenAsksGive(
             FileSessionHandler::class,
             'path',
-            SessionPath::resolve($app, $config)
+            SessionPath::resolve($app, $config),
         );
         $app->whenAsksGive(
             Session::class,
             'name',
-            $config->get('session.name', 'app')
+            $config->get('session.name', 'app'),
         );
     }
 
@@ -43,7 +43,7 @@ class SessionServiceProvider extends ServiceProvider
         // Register console command
         if ($app->isRunningInConsole()) {
             $app->get(KernelInterface::class)->registerCommand(
-                \Oak\Session\Console\Session::class
+                \Oak\Session\Console\Session::class,
             );
         }
     }

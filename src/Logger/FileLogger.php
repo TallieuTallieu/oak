@@ -35,7 +35,7 @@ class FileLogger implements LoggerInterface
     public function __construct(
         string $filename,
         FilesystemInterface $filesystem,
-        RepositoryInterface $config
+        RepositoryInterface $config,
     ) {
         $this->filename = $filename;
         $this->filesystem = $filesystem;
@@ -54,7 +54,7 @@ class FileLogger implements LoggerInterface
             date(is_string($dateFormat) ? $dateFormat : 'd/m/Y H:i') .
                 ' - ' .
                 $text .
-                "\n"
+                "\n",
         );
     }
 }

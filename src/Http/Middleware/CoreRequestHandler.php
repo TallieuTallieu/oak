@@ -34,7 +34,7 @@ class CoreRequestHandler implements RequestHandlerInterface
     public function __construct(
         BaseController $controller,
         string $method,
-        array $params = []
+        array $params = [],
     ) {
         $this->controller = $controller;
         $this->method = $method;
@@ -55,7 +55,7 @@ class CoreRequestHandler implements RequestHandlerInterface
                     get_class($this->controller) .
                     '::' .
                     $this->method .
-                    ' is not callable'
+                    ' is not callable',
             );
         }
 

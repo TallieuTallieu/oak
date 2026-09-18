@@ -15,7 +15,7 @@ class SessionIdentifier implements SessionIdentifierInterface
             $string .= substr(
                 str_replace(['/', '+', '='], '', base64_encode($bytes)),
                 0,
-                $size
+                $size,
             );
         }
         return $string;

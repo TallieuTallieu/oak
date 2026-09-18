@@ -20,7 +20,7 @@ trait HasRoutesTrait
         string $httpMethod,
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         if (!isset($this->routes[$httpMethod])) {
             $this->routes[$httpMethod] = [];
@@ -40,7 +40,7 @@ trait HasRoutesTrait
     public function get(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('GET', $pattern, $controller, $method);
     }
@@ -54,7 +54,7 @@ trait HasRoutesTrait
     public function head(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('HEAD', $pattern, $controller, $method);
     }
@@ -68,7 +68,7 @@ trait HasRoutesTrait
     public function post(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('POST', $pattern, $controller, $method);
     }
@@ -82,7 +82,7 @@ trait HasRoutesTrait
     public function put(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('PUT', $pattern, $controller, $method);
     }
@@ -96,7 +96,7 @@ trait HasRoutesTrait
     public function delete(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('DELETE', $pattern, $controller, $method);
     }
@@ -110,7 +110,7 @@ trait HasRoutesTrait
     public function patch(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('PATCH', $pattern, $controller, $method);
     }
@@ -122,7 +122,7 @@ trait HasRoutesTrait
     public function options(
         string $pattern,
         string $controller,
-        string $method
+        string $method,
     ): Route {
         return $this->registerRoute('OPTIONS', $pattern, $controller, $method);
     }

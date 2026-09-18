@@ -32,7 +32,7 @@ class Scheduler implements SchedulerInterface
      */
     public function isDue(JobInterface $job)
     {
-        return (new CronExpression($job->getCronExpression()))->isDue();
+        return new CronExpression($job->getCronExpression())->isDue();
     }
 
     public function runSchedule(OutputInterface $output)
@@ -41,17 +41,17 @@ class Scheduler implements SchedulerInterface
             if ($this->isDue($job)) {
                 $output->writeLine(
                     '[Scheduler] Running ' . $job->getCommand(),
-                    OutputInterface::TYPE_INFO
+                    OutputInterface::TYPE_INFO,
                 );
                 $output->write($job->execute());
                 $output->writeLine(
                     '[Scheduler] Done.',
-                    OutputInterface::TYPE_INFO
+                    OutputInterface::TYPE_INFO,
                 );
             } else {
                 $output->writeLine(
                     'Nothing to run',
-                    OutputInterface::TYPE_WARNING
+                    OutputInterface::TYPE_WARNING,
                 );
             }
         }

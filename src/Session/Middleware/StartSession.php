@@ -44,7 +44,7 @@ class StartSession implements MiddlewareInterface
         RepositoryInterface $config,
         Session $session,
         CookieInterface $cookie,
-        SessionIdentifierInterface $sessionIdentifier
+        SessionIdentifierInterface $sessionIdentifier,
     ) {
         $this->config = $config;
         $this->session = $session;
@@ -59,7 +59,7 @@ class StartSession implements MiddlewareInterface
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         // Set session cookie
         $cookiePrefix = $this->config->get('session.cookie_prefix', 'session');
@@ -71,11 +71,11 @@ class StartSession implements MiddlewareInterface
             // No session id found, so we generate one
             $identifierLength = $this->config->get(
                 'session.identifier_length',
-                40
+                40,
             );
 
             $sessionId = $this->sessionIdentifier->generate(
-                is_numeric($identifierLength) ? (int) $identifierLength : 40
+                is_numeric($identifierLength) ? (int) $identifierLength : 40,
             );
 
             // Set the id in the cookie

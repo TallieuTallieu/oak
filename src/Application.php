@@ -57,7 +57,7 @@ class Application extends Container
     public function __construct(
         string $envPath,
         string $configPath,
-        string $cachePath
+        string $cachePath,
     ) {
         $this->envPath = $envPath;
         $this->configPath = $configPath;

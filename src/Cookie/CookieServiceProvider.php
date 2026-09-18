@@ -24,11 +24,13 @@ class CookieServiceProvider extends ServiceProvider
             $config = $app->get(RepositoryInterface::class);
 
             $path = $config->get('cookie.path', '/');
+            $sameSite = $config->get('cookie.same_site', 'Lax');
 
             return new Cookie(
                 is_string($path) ? $path : '/',
                 (bool) $config->get('cookie.secure', false),
-                (bool) $config->get('cookie.http_only', true)
+                (bool) $config->get('cookie.http_only', true),
+                is_string($sameSite) ? $sameSite : 'Lax'
             );
         });
     }

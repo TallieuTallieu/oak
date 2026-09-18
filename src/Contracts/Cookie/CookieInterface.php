@@ -23,4 +23,12 @@ interface CookieInterface
      * @return bool
      */
     public function has(string $name): bool;
+
+    /**
+     * Removes a cookie
+     *
+     * @param string $name
+     * @return void
+     */
+    public function delete(string $name): void;
 }

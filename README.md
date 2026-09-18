@@ -119,6 +119,8 @@ use Oak\Cookie\Facade\Cookie;
 Cookie::set('key', 'value');
 
 echo Cookie::get('key'); // value
+
+Cookie::delete('key');
 ```
 
 ##### Cookie config options
@@ -128,6 +130,16 @@ Name | Default
 path | /
 secure | false
 http_only | true
+same_site | Lax
+
+`same_site` accepts `Lax`, `Strict` or `None`. `None` is only valid together
+with `secure`; combining it with an insecure cookie throws instead of letting
+the browser silently drop the cookie.
+
+> **`secure` defaults to `false`.** Oak cannot know whether the host serves over
+> TLS, so it does not assume it — which means a project that never writes a
+> `config/cookie.php` ships its session cookie over plain HTTP. Set
+> `cookie.secure` to `true` in every project that has TLS.
 
 #### Dispatcher
 
@@ -143,6 +155,34 @@ Dispatcher::addListener('created', function($event) {
 Dispatcher::dispatch('created', new Event());
 
 ```
+
+##### Isolating listeners
+
+By default a listener that throws takes down every listener registered after it
+and the throwable surfaces at the `dispatch()` call, which quietly makes
+registration order load-bearing. A listener can opt out of that:
+
+```php
+<?php
+
+use Oak\Dispatcher\Facade\Dispatcher;
+use Oak\Logger\Facade\Logger;
+
+// Where throwables from isolated listeners go
+Dispatcher::setExceptionHandler(function (Throwable $throwable, string $eventName, callable $listener) {
+    Logger::log($eventName . ' listener failed: ' . $throwable->getMessage());
+});
+
+// A single listener that must not be able to break the event
+Dispatcher::addListener('order.paid', $sendConfirmationMail, true);
+
+// ...or isolate every listener of one dispatch
+Dispatcher::dispatchIsolated('order.paid', new Event());
+```
+
+Nothing is swallowed: if no exception handler is configured, the remaining
+listeners still run and the first throwable is re-thrown once the event is
+finished.
 
 #### Filesystem
 
@@ -180,6 +220,27 @@ Session::set('key', 'value');
 Session::save();
 
 echo Session::get('key'); // value
+```
+
+##### Rotating and clearing a session
+
+Rotate the session id whenever the privilege level of the session changes — on
+login above all — so that an id an attacker planted beforehand is worthless
+afterwards. `regenerate()` mints a new id, carries the data over, drops the old
+handler entry and rewrites the cookie:
+
+```php
+<?php
+
+use Oak\Session\Facade\Session;
+
+// After authenticating, before writing the user onto the session
+Session::regenerate();
+Session::set('user_id', $user->id);
+Session::save();
+
+// On logout
+Session::destroy();
 ```
 
 ##### Session config options

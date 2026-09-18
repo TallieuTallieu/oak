@@ -6,7 +6,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=8.2",
+        "php": "^8.4",
         "nyholm/psr7": "^1.0@dev",
         "nyholm/psr7-server": "1.0.2",
         "psr/http-server-handler": "^1.0@dev",

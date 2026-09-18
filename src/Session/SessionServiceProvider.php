@@ -26,6 +26,10 @@ class SessionServiceProvider extends ServiceProvider
             SessionIdentifier::class
         );
 
+        $name = $config->get('session.name', 'app');
+        $cookiePrefix = $config->get('session.cookie_prefix', 'session');
+        $identifierLength = $config->get('session.identifier_length', 40);
+
         $app->whenAsksGive(
             FileSessionHandler::class,
             'path',
@@ -34,7 +38,17 @@ class SessionServiceProvider extends ServiceProvider
         $app->whenAsksGive(
             Session::class,
             'name',
-            $config->get('session.name', 'app')
+            is_string($name) ? $name : 'app'
+        );
+        $app->whenAsksGive(
+            Session::class,
+            'cookiePrefix',
+            is_string($cookiePrefix) ? $cookiePrefix : 'session'
+        );
+        $app->whenAsksGive(
+            Session::class,
+            'identifierLength',
+            is_numeric($identifierLength) ? (int) $identifierLength : 40
         );
     }
 

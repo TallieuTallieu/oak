@@ -9,8 +9,13 @@ use Oak\Facade;
  *
  * @method static \SessionHandlerInterface getHandler() Get the session handler
  * @method static string getName() Get the session name
+ * @method static string getCookieName() Get the name of the cookie carrying the session ID
+ * @method static int getIdentifierLength() Get the length freshly minted session IDs are generated with
  * @method static mixed getId() Get the session ID
  * @method static void setId(mixed $id) Set the session ID
+ * @method static void start() Pick up the session ID from the cookie, minting one when there is none
+ * @method static void regenerate(bool $destroyOld = true) Rotate the session ID, carrying the data over
+ * @method static void destroy() Clear the session, its handler entry and its cookie
  * @method static void set(string $key, mixed $data) Set a session value
  * @method static mixed get(string $key) Get a session value
  * @method static bool has(string $key) Check if session has a key

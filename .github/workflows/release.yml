@@ -40,33 +40,42 @@ jobs:
       - name: Run verification checks
         run: composer validate
 
+      # Decide the bump from every commit this push brings in, not just the
+      # merge commit: a GitHub merge commit only carries the PR title, so
+      # breaking-change markers on the individual commits would be missed.
       - name: Determine version bump type
         id: version-type
+        env:
+          BEFORE: ${{ github.event.before }}
         run: |
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-
-          BRANCH_NAME=""
-          if [[ "$COMMIT_MSG" == *"Merge pull request"* ]]; then
-            BRANCH_NAME=$(echo "$COMMIT_MSG" | grep -o 'from [^/]*/[^[:space:]]*' | cut -d'/' -f2)
+          # First push to the branch, or a force push: fall back to the first parent
+          if [[ -z "$BEFORE" || "$BEFORE" =~ ^0+$ ]] || ! git merge-base --is-ancestor "$BEFORE" HEAD 2>/dev/null; then
+            BEFORE="HEAD^1"
           fi
+          RANGE="$BEFORE..HEAD"
+
+          MESSAGES=$(git log --format=%B "$RANGE")
+          SUBJECTS=$(git log --format=%s "$RANGE")
+          # Branch prefixes of the merged PRs, e.g. "feature" from "from Org/feature/sc-123--x"
+          PREFIXES=$(echo "$SUBJECTS" | sed -nE 's|^Merge pull request #[0-9]+ from [^/]+/([^/ ]+)/.*|\1|p')
 
           VERSION_TYPE="patch"
 
-          if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"feat!"* ]]; then
+          # Conventional Commits: "type!:" / "type(scope)!:" or a BREAKING CHANGE footer.
+          # Lines are matched anywhere in the messages so PR titles on merge commits and
+          # the "* type: ..." lists of squash merges count too.
+          if echo "$MESSAGES" | grep -qE '^(\* )?[a-z]+(\([^)]*\))?!: ' \
+            || echo "$MESSAGES" | grep -qE '^BREAKING[ -]CHANGE: ' \
+            || echo "$PREFIXES" | grep -qE '^(major|breaking)$'; then
             VERSION_TYPE="major"
-          elif [[ "$BRANCH_NAME" == *"major"* ]] || [[ "$BRANCH_NAME" == *"breaking"* ]]; then
-            VERSION_TYPE="major"
-          elif [[ "$BRANCH_NAME" == *"feat"* ]] || [[ "$BRANCH_NAME" == *"feature"* ]] || [[ "$BRANCH_NAME" == *"minor"* ]]; then
+          elif echo "$MESSAGES" | grep -qE '^(\* )?feat(\([^)]*\))?: ' \
+            || echo "$PREFIXES" | grep -qE '^(feat|feature|minor)$'; then
             VERSION_TYPE="minor"
-          elif [[ "$BRANCH_NAME" == *"fix"* ]] || [[ "$BRANCH_NAME" == *"hotfix"* ]] || [[ "$BRANCH_NAME" == *"patch"* ]]; then
-            VERSION_TYPE="patch"
-          elif [[ "$BRANCH_NAME" == *"sc-"* ]] && [[ "$BRANCH_NAME" == *"feature"* ]]; then
-            VERSION_TYPE="minor"
-          elif [[ "$COMMIT_MSG" == *"feat:"* ]] || [[ "$COMMIT_MSG" == *"feat("* ]]; then
-            VERSION_TYPE="minor"
-          elif [[ "$COMMIT_MSG" == *"fix:"* ]] || [[ "$COMMIT_MSG" == *"fix("* ]]; then
-            VERSION_TYPE="patch"
           fi
+
+          echo "Commits in $RANGE:"
+          echo "$SUBJECTS" | sed 's/^/  /'
+          echo "Version bump: $VERSION_TYPE"
 
           echo "version_type=$VERSION_TYPE" >> "$GITHUB_OUTPUT"
 

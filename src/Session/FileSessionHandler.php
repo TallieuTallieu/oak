@@ -12,6 +12,15 @@ use SessionHandlerInterface;
 class FileSessionHandler implements SessionHandlerInterface
 {
     /**
+     * Session ids this handler is willing to turn into a file path
+     *
+     * Ids reach this class from whatever the host uses to carry them, usually a
+     * cookie, so they are attacker-controlled. Anything outside this character
+     * set could escape the session directory once concatenated into a path.
+     */
+    private const SESSION_ID_PATTERN = '/^[A-Za-z0-9]+$/';
+
+    /**
      * Handles working with files
      *
      * @var FilesystemInterface $filesystem
@@ -53,9 +62,25 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     public function destroy($sessionId): bool
     {
+        if (!$this->isValidSessionId($sessionId)) {
+            return false;
+        }
+
         $this->filesystem->delete($this->path . '/' . $sessionId);
 
         return true;
+    }
+
+    /**
+     * Checks whether a session id is safe to build a file path with
+     *
+     * @param mixed $sessionId
+     * @return bool
+     */
+    private function isValidSessionId($sessionId): bool
+    {
+        return is_string($sessionId) &&
+            preg_match(self::SESSION_ID_PATTERN, $sessionId) === 1;
     }
 
     /**
@@ -103,6 +128,10 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     public function read($sessionId): string
     {
+        if (!$this->isValidSessionId($sessionId)) {
+            return '';
+        }
+
         if ($this->filesystem->exists($this->path . '/' . $sessionId)) {
             $contents = $this->filesystem->get($this->path . '/' . $sessionId);
 
@@ -121,6 +150,10 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     public function write($sessionId, $sessionData): bool
     {
+        if (!$this->isValidSessionId($sessionId)) {
+            return false;
+        }
+
         $this->filesystem->put($this->path . '/' . $sessionId, $sessionData);
 
         return true;

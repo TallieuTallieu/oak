@@ -28,11 +28,11 @@ class Scheduler implements SchedulerInterface
 
     /**
      * @param JobInterface $job
-     * @return bool|null
+     * @return bool
      */
     public function isDue(JobInterface $job)
     {
-        return CronExpression::factory($job->getCronExpression())->isDue();
+        return (new CronExpression($job->getCronExpression()))->isDue();
     }
 
     public function runSchedule(OutputInterface $output)

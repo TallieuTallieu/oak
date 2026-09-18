@@ -29,8 +29,11 @@ class View extends Command
      * @param FilesystemInterface $filesystem
      * @param ContainerInterface $app
      */
-    public function __construct(RepositoryInterface $config, FilesystemInterface $filesystem, ContainerInterface $app)
-    {
+    public function __construct(
+        RepositoryInterface $config,
+        FilesystemInterface $filesystem,
+        ContainerInterface $app,
+    ) {
         $this->config = $config;
         $this->filesystem = $filesystem;
 
@@ -47,8 +50,9 @@ class View extends Command
             ->setName('view')
             ->setDescription('View the log')
             ->addArgument(
-                Argument::create('lines')
-                    ->setDescription('Amount of lines to display')
+                Argument::create('lines')->setDescription(
+                    'Amount of lines to display',
+                ),
             );
     }
 
@@ -58,14 +62,18 @@ class View extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $lines = $this->filesystem->get($this->config->get('logger.filename', 'logs/log.txt'));
+        $filename = $this->config->get('logger.filename', 'logs/log.txt');
+        $lines = $this->filesystem->get(
+            is_string($filename) ? $filename : 'logs/log.txt',
+        );
 
-        $linesArray = explode("\n", $lines);
-        $linesArray = array_filter($linesArray, function($value) {
-            return ($value);
+        $linesArray = explode("\n", $lines === false ? '' : $lines);
+        $linesArray = array_filter($linesArray, function (string $value) {
+            return $value !== '';
         });
 
-        $lineAmount = (int) $input->getArgument('lines');
+        $requestedLines = $input->getArgument('lines');
+        $lineAmount = is_numeric($requestedLines) ? (int) $requestedLines : 0;
         $linesArray = array_slice($linesArray, -$lineAmount, $lineAmount);
 
         foreach ($linesArray as $line) {

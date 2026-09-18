@@ -37,7 +37,7 @@ abstract class ServiceProvider
     }
 
     /**
-     *
+     * @return void
      */
     final public function setBooted()
     {
@@ -57,7 +57,7 @@ abstract class ServiceProvider
     abstract public function register(ContainerInterface $app);
 
     /**
-     * @return array
+     * @return array<int, string>
      */
     public function provides(): array
     {

@@ -21,8 +21,10 @@ class SchedulerCommand extends Command
      * @param SchedulerInterface $scheduler
      * @param ContainerInterface $app
      */
-    public function __construct(SchedulerInterface $scheduler, ContainerInterface $app)
-    {
+    public function __construct(
+        SchedulerInterface $scheduler,
+        ContainerInterface $app,
+    ) {
         $this->scheduler = $scheduler;
 
         parent::__construct($app);
@@ -36,8 +38,7 @@ class SchedulerCommand extends Command
     {
         return $signature
             ->setName('scheduler')
-            ->addSubCommand(TickCommand::class)
-        ;
+            ->addSubCommand(TickCommand::class);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)

@@ -42,7 +42,9 @@ abstract class Command
      * @param Signature $signature
      * @return Signature
      */
-    abstract protected function createSignature(Signature $signature): Signature;
+    abstract protected function createSignature(
+        Signature $signature,
+    ): Signature;
 
     /**
      * @return string
@@ -52,7 +54,7 @@ abstract class Command
     {
         $this->make();
 
-        if (! $this->signature->hasName()) {
+        if (!$this->signature->hasName()) {
             throw new \Exception('Command should have a name');
         }
 
@@ -83,6 +85,7 @@ abstract class Command
     /**
      * Creates the signature of the command
      *
+     * @return void
      * @throws \Exception
      */
     final protected function make()
@@ -93,16 +96,15 @@ abstract class Command
 
         $signature = $this->app->get(Signature::class);
 
-        $signature
-            ->addOption(
-                Option::create('help', 'h')
-                    ->setDescription('Display the help message')
-            )
-        ;
+        $signature->addOption(
+            Option::create('help', 'h')->setDescription(
+                'Display the help message',
+            ),
+        );
 
         $this->signature = $this->createSignature($signature);
 
-        if (! $this->signature->hasName()) {
+        if (!$this->signature->hasName()) {
             throw new \Exception('Command should have a name');
         }
 
@@ -112,6 +114,7 @@ abstract class Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return void
      * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -122,6 +125,7 @@ abstract class Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return void
      * @throws \Exception
      */
     final public function run(InputInterface $input, OutputInterface $output)
@@ -130,13 +134,15 @@ abstract class Command
 
         $showHelpMessage = (bool) $input->getOption('help');
 
-        if ($showHelpMessage && ! $input->hasSubCommand()) {
+        if ($showHelpMessage && !$input->hasSubCommand()) {
             $this->outputHelpMessage($output);
             return;
         }
 
-        if ($input->hasSubCommand()) {
-            $command = $this->signature->getSubCommand($input->getSubCommand());
+        $subCommandName = $input->getSubCommand();
+
+        if ($subCommandName) {
+            $command = $this->signature->getSubCommand($subCommandName);
             $command->run($input, $output);
             return;
         }
@@ -148,12 +154,16 @@ abstract class Command
 
     /**
      * @param OutputInterface $output
+     * @return void
      * @throws \Exception
      */
     public function outputHelpMessage(OutputInterface $output)
     {
         if ($this->getDescription()) {
-            $output->writeLine(ucfirst($this->getName()).':', OutputInterface::TYPE_WARNING);
+            $output->writeLine(
+                ucfirst($this->getName()) . ':',
+                OutputInterface::TYPE_WARNING,
+            );
             $output->writeLine($this->getDescription());
         }
 
@@ -173,7 +183,7 @@ abstract class Command
 
         if (count($arguments)) {
             foreach ($arguments as $argument) {
-                $output->write(' <'.$argument->getName().'>');
+                $output->write(' <' . $argument->getName() . '>');
             }
         }
 
@@ -186,18 +196,30 @@ abstract class Command
 
         // Output available commands
         if (count($commands)) {
-            $output->writeLine('Available commands:', OutputInterface::TYPE_WARNING);
+            $output->writeLine(
+                'Available commands:',
+                OutputInterface::TYPE_WARNING,
+            );
 
             foreach ($commands as $command) {
-                $output->write(str_pad($command->getName(), 20), OutputInterface::TYPE_INFO);
-                $output->write($command->getDescription(), OutputInterface::TYPE_INFO);
+                $output->write(
+                    str_pad($command->getName(), 20),
+                    OutputInterface::TYPE_INFO,
+                );
+                $output->write(
+                    $command->getDescription(),
+                    OutputInterface::TYPE_INFO,
+                );
                 $output->newline();
 
                 $subCommands = $command->getSignature()->getSubCommands();
                 ksort($subCommands);
 
                 foreach ($subCommands as $subCommand) {
-                    $output->write(' '.str_pad($subCommand->getName(), 19), OutputInterface::TYPE_PLAIN);
+                    $output->write(
+                        ' ' . str_pad($subCommand->getName(), 19),
+                        OutputInterface::TYPE_PLAIN,
+                    );
                     $output->write($subCommand->getDescription());
                     $output->newline();
                 }
@@ -211,7 +233,10 @@ abstract class Command
             $output->writeLine('Arguments:', OutputInterface::TYPE_WARNING);
 
             foreach ($arguments as $argument) {
-                $output->write(str_pad($argument->getName(), 20), OutputInterface::TYPE_INFO);
+                $output->write(
+                    str_pad($argument->getName(), 20),
+                    OutputInterface::TYPE_INFO,
+                );
                 $output->write($argument->getDescription());
                 $output->newline();
             }
@@ -224,7 +249,13 @@ abstract class Command
             $output->writeLine('Options:', OutputInterface::TYPE_WARNING);
 
             foreach ($options as $option) {
-                $output->write(str_pad('-'.$option->getAlias().', --'.$option->getName(), 20), OutputInterface::TYPE_INFO);
+                $output->write(
+                    str_pad(
+                        '-' . $option->getAlias() . ', --' . $option->getName(),
+                        20,
+                    ),
+                    OutputInterface::TYPE_INFO,
+                );
                 $output->write($option->getDescription());
                 $output->newline();
             }

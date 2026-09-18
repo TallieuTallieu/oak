@@ -2,13 +2,15 @@
 
 ## Build/Test Commands
 
-- **Format**: `prettier --write .` (PHP files via @prettier/plugin-php)
+- **Format**: `yarn format` or `make yarn-format` (PHP files via @prettier/plugin-php)
 - **Docker**: `make docker` (starts development environment), `make docker-exec` (shell access)
-- **No test framework configured** - this is a library project without tests
+- **Tests**: `vendor/bin/pest` or `make test` (Pest, tests live in `tests/`)
+- **Static analysis**: `composer phpstan` or `make phpstan` (PHPStan level 9, zero errors, no baseline — keep it that way)
+- **CI**: PRs to master run tests (PHP 8.4), PHPStan, prettier check and `composer audit`; merges to master auto-tag a release (see `.github/workflows/`)
 
 ## Code Style Guidelines
 
-- **PHP**: Minimum PHP 8.2, PSR-4 autoloading (`Oak\` → `src/`)
+- **PHP**: Minimum PHP 8.4, PSR-4 autoloading (`Oak\` → `src/`)
 - **Indentation**: 2 spaces (editorconfig), 4 spaces in Prettier for PHP
 - **Namespacing**: Follow `Oak\ComponentName\` pattern (e.g., `Oak\Console\`, `Oak\Http\`)
 - **Classes**: PascalCase, prefer composition over inheritance

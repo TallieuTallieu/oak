@@ -34,8 +34,12 @@ class ClearAll extends Command
      * @param Session $session
      * @param ContainerInterface $app
      */
-    public function __construct(Session $session, FilesystemInterface $filesystem, RepositoryInterface $config, ContainerInterface $app)
-    {
+    public function __construct(
+        Session $session,
+        FilesystemInterface $filesystem,
+        RepositoryInterface $config,
+        ContainerInterface $app,
+    ) {
         $this->session = $session;
         $this->filesystem = $filesystem;
         $this->config = $config;
@@ -51,8 +55,7 @@ class ClearAll extends Command
     {
         return $signature
             ->setName('clear-all')
-            ->setDescription('Clear all sessions')
-            ;
+            ->setDescription('Clear all sessions');
     }
 
     /**
@@ -64,13 +67,13 @@ class ClearAll extends Command
         $sessionHandler = $this->session->getHandler();
 
         $sessions = $this->filesystem->files(
-            SessionPath::resolve($this->app, $this->config)
+            SessionPath::resolve($this->app, $this->config),
         );
 
         foreach ($sessions as $session) {
             $sessionId = basename($session);
             $sessionHandler->destroy($sessionId);
-            $output->writeLine('Clearing session '.$sessionId);
+            $output->writeLine('Clearing session ' . $sessionId);
         }
 
         $output->writeLine('Sessions cleared!', OutputInterface::TYPE_INFO);

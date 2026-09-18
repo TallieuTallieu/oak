@@ -10,7 +10,7 @@ use Oak\Contracts\Scheduler\SchedulerInterface;
 class Scheduler implements SchedulerInterface
 {
     /**
-     * @var array $jobs
+     * @var array<int, JobInterface> $jobs
      */
     private $jobs = [];
 
@@ -28,23 +28,31 @@ class Scheduler implements SchedulerInterface
 
     /**
      * @param JobInterface $job
-     * @return bool|null
+     * @return bool
      */
     public function isDue(JobInterface $job)
     {
-        return CronExpression::factory($job->getCronExpression())
-            ->isDue();
+        return new CronExpression($job->getCronExpression())->isDue();
     }
 
     public function runSchedule(OutputInterface $output)
     {
         foreach ($this->jobs as $job) {
             if ($this->isDue($job)) {
-                $output->writeLine('[Scheduler] Running '.$job->getCommand(), OutputInterface::TYPE_INFO);
+                $output->writeLine(
+                    '[Scheduler] Running ' . $job->getCommand(),
+                    OutputInterface::TYPE_INFO,
+                );
                 $output->write($job->execute());
-                $output->writeLine('[Scheduler] Done.', OutputInterface::TYPE_INFO);
+                $output->writeLine(
+                    '[Scheduler] Done.',
+                    OutputInterface::TYPE_INFO,
+                );
             } else {
-                $output->writeLine('Nothing to run', OutputInterface::TYPE_WARNING);
+                $output->writeLine(
+                    'Nothing to run',
+                    OutputInterface::TYPE_WARNING,
+                );
             }
         }
     }

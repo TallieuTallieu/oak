@@ -23,8 +23,10 @@ final class NextRequestHandler implements RequestHandlerInterface
      * @param MiddlewareStack $middlewareStack
      * @param CoreRequestHandler $coreRequestHandler
      */
-    public function __construct(MiddlewareStack $middlewareStack, CoreRequestHandler $coreRequestHandler)
-    {
+    public function __construct(
+        MiddlewareStack $middlewareStack,
+        CoreRequestHandler $coreRequestHandler,
+    ) {
         $this->middlewareStack = $middlewareStack;
         $this->coreRequestHandler = $coreRequestHandler;
     }

@@ -5,22 +5,22 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@prettier/plugin-php@npm:^0.22.4":
-  version: 0.22.4
-  resolution: "@prettier/plugin-php@npm:0.22.4"
+"@prettier/plugin-php@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "@prettier/plugin-php@npm:0.25.0"
   dependencies:
-    linguist-languages: "npm:^7.27.0"
-    php-parser: "npm:^3.1.5"
+    linguist-languages: "npm:^8.0.0"
+    php-parser: "npm:^3.4.0"
   peerDependencies:
     prettier: ^3.0.0
-  checksum: 10c0/31b46f52caad02ca41fc64a21676d26d4c8100f188a2d61107909e36e09c6a6342d474deea99f6abd62bce943b43d1ae0242281eba207e9376e72bfeba619cf3
+  checksum: 10c0/c894e74718ce7a2ae7f632d3566791c545ce68a328a763c97ad0526b0f00a724429979f8e411709e56a41b8debdb512c10823daaeb42458777c0b41c242c8d34
   languageName: node
   linkType: hard
 
-"linguist-languages@npm:^7.27.0":
-  version: 7.31.2
-  resolution: "linguist-languages@npm:7.31.2"
-  checksum: 10c0/ed28967c5e3088ddf4de0363de0c7cbbe03d8dbe91655edfce440b84c51aeac1c295df8807c05ae23411246d6c2f3155da2cceda8ed678e8476d0e0d16d5cb15
+"linguist-languages@npm:^8.0.0":
+  version: 8.2.0
+  resolution: "linguist-languages@npm:8.2.0"
+  checksum: 10c0/28383cda9cdbe1bd29938ad776d3190ae16c1828dadaba34d799dbc049872b7deada607d93d557ab5551c5789f3e4a47eab6241ddb8ac0a7ed1d7b0bc0c6b14d
   languageName: node
   linkType: hard
 
@@ -28,23 +28,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "oak@workspace:."
   dependencies:
-    "@prettier/plugin-php": "npm:^0.22.4"
-    prettier: "npm:^3.5.3"
+    "@prettier/plugin-php": "npm:^0.25.0"
+    prettier: "npm:^3.9.8"
   languageName: unknown
   linkType: soft
 
-"php-parser@npm:^3.1.5":
-  version: 3.2.3
-  resolution: "php-parser@npm:3.2.3"
-  checksum: 10c0/4542ad11b1a8365f1d9a6f664dd7057acba3eb37c796d8f5fb4bb6c227a9dc437b7efc3f00e8b6c32cbd0bcbdbcef05f5d775a6ea5b395920b6157563a34ad36
+"php-parser@npm:^3.4.0":
+  version: 3.7.0
+  resolution: "php-parser@npm:3.7.0"
+  checksum: 10c0/eecfb4da0fe900f5a1abb4370f64404345ae6a98a026e1eac8d4f11e7a3b56ef45fde031a98793aaa5a54cead27a6b93c00e447f0dfc71f58bdcbe5382c3dae7
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.5.3":
-  version: 3.6.0
-  resolution: "prettier@npm:3.6.0"
+"prettier@npm:^3.9.8":
+  version: 3.9.8
+  resolution: "prettier@npm:3.9.8"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/636897c8084b71ef1f740a46199df0d8f6ed896aa497212cc8cc229d3026b9dca82fa92f61e55924c4708cea11e39a88478e2d93c4818741c55b7408a9ac6d91
+  checksum: 10c0/257e5ef11ba5006d0b0712271705701c065c8003e07763f996ce185d39633902f3fe1f814839eed76f75c97b6d5376d6157bd9f44db18cacb1dbdcb263cc66ae
   languageName: node
   linkType: hard

@@ -30,7 +30,7 @@ trait CrontabExpressionTrait
     private $dayOfWeek = '*';
 
     /**
-     * @var $currentStep
+     * @var int|null $currentStep
      */
     private $currentStep;
 
@@ -39,7 +39,15 @@ trait CrontabExpressionTrait
      */
     public function getCronExpression(): string
     {
-        return $this->minute.' '.$this->hour.' '.$this->day.' '.$this->month.' '.$this->dayOfWeek;
+        return $this->minute .
+            ' ' .
+            $this->hour .
+            ' ' .
+            $this->day .
+            ' ' .
+            $this->month .
+            ' ' .
+            $this->dayOfWeek;
     }
 
     /**
@@ -53,78 +61,102 @@ trait CrontabExpressionTrait
         return $this;
     }
 
+    /**
+     * @return void
+     */
     public function minutes()
     {
-        if (! $this->currentStep) {
+        if (!$this->currentStep) {
             return;
         }
 
-        $this->minute = '*/'.$this->currentStep;
+        $this->minute = '*/' . $this->currentStep;
 
         $this->currentStep = null;
     }
 
+    /**
+     * @return void
+     */
     public function hours()
     {
-        if (! $this->currentStep) {
+        if (!$this->currentStep) {
             return;
         }
 
-        $this->minute = 0;
-        $this->hour = '*/'.$this->currentStep;
+        $this->minute = '0';
+        $this->hour = '*/' . $this->currentStep;
 
         $this->currentStep = null;
     }
 
+    /**
+     * @return void
+     */
     public function days()
     {
-        if (! $this->currentStep) {
+        if (!$this->currentStep) {
             return;
         }
 
-        $this->minute = 0;
-        $this->hour = 0;
-        $this->day = '*/'.$this->currentStep;
+        $this->minute = '0';
+        $this->hour = '0';
+        $this->day = '*/' . $this->currentStep;
 
         $this->currentStep = null;
     }
 
+    /**
+     * @return void
+     */
     public function months()
     {
-        if (! $this->currentStep) {
+        if (!$this->currentStep) {
             return;
         }
 
-        $this->minute = 0;
-        $this->hour = 0;
-        $this->day = 1;
-        $this->month = '*/'.$this->currentStep;
+        $this->minute = '0';
+        $this->hour = '0';
+        $this->day = '1';
+        $this->month = '*/' . $this->currentStep;
 
         $this->currentStep = null;
     }
 
+    /**
+     * @return void
+     */
     public function hourly()
     {
-        $this->hour = 0;
+        $this->hour = '0';
     }
 
+    /**
+     * @return void
+     */
     public function daily()
     {
-        $this->minute = 0;
-        $this->hour = 0;
+        $this->minute = '0';
+        $this->hour = '0';
     }
 
+    /**
+     * @return void
+     */
     public function weekly()
     {
-        $this->minute = 0;
-        $this->hour = 0;
-        $this->dayOfWeek = 0;
+        $this->minute = '0';
+        $this->hour = '0';
+        $this->dayOfWeek = '0';
     }
 
+    /**
+     * @return void
+     */
     public function monthly()
     {
-        $this->minute = 0;
-        $this->hour = 0;
-        $this->day = 1;
+        $this->minute = '0';
+        $this->hour = '0';
+        $this->day = '1';
     }
 }

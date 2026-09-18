@@ -24,7 +24,7 @@ class MigrateCommand extends Command
      */
     public function __construct(
         MigrationManager $manager,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->manager = $manager;
         parent::__construct($app);
@@ -36,8 +36,8 @@ class MigrateCommand extends Command
             ->setName('migrate')
             ->addOption(
                 Option::create('migrator', 'm')->setDescription(
-                    'Specify a specific migrator'
-                )
+                    'Specify a specific migrator',
+                ),
             );
     }
 

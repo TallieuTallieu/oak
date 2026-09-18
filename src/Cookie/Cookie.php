@@ -34,36 +34,49 @@ class Cookie implements CookieInterface
 
     /**
      * @param string $name
-     * @param $value
+     * @param mixed $value
      * @param int $expire
      * @return mixed|void
      */
     public function set(string $name, $value, int $expire = 0)
     {
         $value = json_encode($value);
-        setcookie($name, $value, $expire, $this->path, '', $this->secure, $this->httpOnly);
+
+        if ($value === false) {
+            throw new \InvalidArgumentException(
+                'Cookie value could not be encoded as JSON',
+            );
+        }
+
+        setcookie(
+            $name,
+            $value,
+            $expire,
+            $this->path,
+            '',
+            $this->secure,
+            $this->httpOnly,
+        );
         $_COOKIE[$name] = $value;
     }
 
     /**
      * @param string $name
-     * @return mixed|null
+     * @return mixed
      */
     public function get(string $name)
     {
-        if ($this->has($name)) {
-            return json_decode($_COOKIE[$name]);
-        }
+        $value = $_COOKIE[$name] ?? null;
 
-        return null;
+        return is_string($value) ? json_decode($value) : null;
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      */
     public function has(string $name): bool
     {
-        return (isset($_COOKIE[$name]));
+        return isset($_COOKIE[$name]);
     }
 }

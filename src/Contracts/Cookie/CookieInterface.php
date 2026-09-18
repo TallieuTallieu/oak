@@ -6,7 +6,7 @@ interface CookieInterface
 {
     /**
      * @param string $name
-     * @param $value
+     * @param mixed $value
      * @param int $expire
      * @return mixed
      */

@@ -9,7 +9,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class MiddlewareStack
 {
     /**
-     * @var array $middleware
+     * @var array<int, \Psr\Http\Server\MiddlewareInterface> $middleware
      */
     private $middleware;
 
@@ -20,7 +20,7 @@ class MiddlewareStack
 
     /**
      * MiddlewareStack constructor.
-     * @param array $middleware
+     * @param array<int, \Psr\Http\Server\MiddlewareInterface> $middleware
      */
     public function __construct(array $middleware = [])
     {
@@ -34,7 +34,7 @@ class MiddlewareStack
      */
     public function hasNext(): bool
     {
-        return isset($this->middleware[$this->currentIndex+1]);
+        return isset($this->middleware[$this->currentIndex + 1]);
     }
 
     /**
@@ -44,10 +44,15 @@ class MiddlewareStack
      * @param RequestHandlerInterface $requestHandler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $requestHandler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $requestHandler,
+    ): ResponseInterface {
         $this->currentIndex = $this->currentIndex + 1;
 
-        return $this->middleware[$this->currentIndex]->process($request, $requestHandler);
+        return $this->middleware[$this->currentIndex]->process(
+            $request,
+            $requestHandler,
+        );
     }
 }

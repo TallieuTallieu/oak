@@ -7,14 +7,16 @@ use Oak\Facade;
 
 /**
  * Logger Facade providing static access to logging functionality
- * 
+ *
  * @method static void log(string $text) Log a message
+ *
+ * @extends Facade<LoggerInterface>
  */
 class Logger extends Facade
 {
     /**
      * Get the service contract that this facade represents
-     * 
+     *
      * @return class-string<LoggerInterface>
      */
     protected static function getContract(): string

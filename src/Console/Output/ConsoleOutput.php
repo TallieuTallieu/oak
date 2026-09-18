@@ -24,11 +24,11 @@ class ConsoleOutput implements OutputInterface
             self::TYPE_ERROR => '0;31',
         ];
 
-        if (! isset($colors[$type])) {
+        if (!isset($colors[$type])) {
             return $message;
         }
 
-        return "\033[".$colors[$type]."m".$message."\033[0m";
+        return "\033[" . $colors[$type] . 'm' . $message . "\033[0m";
     }
 
     /**

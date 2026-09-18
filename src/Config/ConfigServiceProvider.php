@@ -17,9 +17,7 @@ class ConfigServiceProvider extends ServiceProvider
     {
         // Register Config command
         if ($app->isRunningInConsole()) {
-            $app->get(KernelInterface::class)
-                ->registerCommand(Config::class)
-            ;
+            $app->get(KernelInterface::class)->registerCommand(Config::class);
         }
 
         // Load configuration variables
@@ -27,15 +25,18 @@ class ConfigServiceProvider extends ServiceProvider
         $config = $app->get(RepositoryInterface::class);
 
         // Check if the cache file exists
-        if ($fs->exists($app->getCachePath().'config.php')) {
+        if ($fs->exists($app->getCachePath() . 'config.php')) {
             // It exists so we set all config variables from the cache
-            $config->setAll(require $app->getCachePath().'config.php');
+            $config->setAll(require $app->getCachePath() . 'config.php');
             return;
         }
 
         // Load all variables from all config files to the repository
         foreach ($fs->files($app->getConfigPath()) as $file) {
-            $config->set(str_replace('.php', '', basename($file)), require $file);
+            $config->set(
+                str_replace('.php', '', basename($file)),
+                require $file,
+            );
         }
 
         // Add the config path to the config
@@ -53,6 +54,6 @@ class ConfigServiceProvider extends ServiceProvider
 
     public function provides(): array
     {
-        return [RepositoryInterface::class,];
+        return [RepositoryInterface::class];
     }
 }

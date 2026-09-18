@@ -22,8 +22,10 @@ class ResetCountersCommand extends Command
      * @param MigrationManager $manager
      * @param ContainerInterface $app
      */
-    public function __construct(MigrationManager $manager, ContainerInterface $app)
-    {
+    public function __construct(
+        MigrationManager $manager,
+        ContainerInterface $app,
+    ) {
         $this->manager = $manager;
         parent::__construct($app);
     }
@@ -32,18 +34,23 @@ class ResetCountersCommand extends Command
     {
         return $signature
             ->setName('reset-counters')
-            ->setDescription('Reset migration counters to 0 without running any migrations')
-            ->addOption(
-                Option::create('migrator', 'm')
-                    ->setDescription('Specify a specific migrator')
+            ->setDescription(
+                'Reset migration counters to 0 without running any migrations',
             )
-        ;
+            ->addOption(
+                Option::create('migrator', 'm')->setDescription(
+                    'Specify a specific migrator',
+                ),
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (! count($this->manager->getMigrators())) {
-            $output->writeLine('No migrators registered', OutputInterface::TYPE_ERROR);
+        if (!count($this->manager->getMigrators())) {
+            $output->writeLine(
+                'No migrators registered',
+                OutputInterface::TYPE_ERROR,
+            );
             return;
         }
 
@@ -51,11 +58,13 @@ class ResetCountersCommand extends Command
         $resetCount = 0;
 
         foreach ($this->manager->getMigrators() as $migrator) {
-            if (! $migratorName || $migrator->getName() === $migratorName) {
+            if (!$migratorName || $migrator->getName() === $migratorName) {
                 // Reset the counter to 0 without running any migrations
                 $migrator->resetCounter();
-                
-                $output->writeLine('Reset counter for migrator: ' . $migrator->getName());
+
+                $output->writeLine(
+                    'Reset counter for migrator: ' . $migrator->getName(),
+                );
                 $resetCount++;
 
                 if ($migratorName) {
@@ -66,12 +75,26 @@ class ResetCountersCommand extends Command
 
         if ($resetCount === 0) {
             if ($migratorName) {
-                $output->writeLine('Migrator "' . $migratorName . '" not found', OutputInterface::TYPE_ERROR);
+                $output->writeLine(
+                    'Migrator "' .
+                        (is_scalar($migratorName)
+                            ? (string) $migratorName
+                            : '') .
+                        '" not found',
+                    OutputInterface::TYPE_ERROR,
+                );
             } else {
-                $output->writeLine('No migrators found to reset', OutputInterface::TYPE_ERROR);
+                $output->writeLine(
+                    'No migrators found to reset',
+                    OutputInterface::TYPE_ERROR,
+                );
             }
         } else {
-            $output->writeLine('Successfully reset ' . $resetCount . ' migrator counter(s) to 0');
+            $output->writeLine(
+                'Successfully reset ' .
+                    $resetCount .
+                    ' migrator counter(s) to 0',
+            );
         }
     }
 }

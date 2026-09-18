@@ -22,8 +22,10 @@ class Files extends Command
      * @param FilesystemInterface $filesystem
      * @param ContainerInterface $app
      */
-    public function __construct(FilesystemInterface $filesystem, ContainerInterface $app)
-    {
+    public function __construct(
+        FilesystemInterface $filesystem,
+        ContainerInterface $app,
+    ) {
         $this->filesystem = $filesystem;
 
         parent::__construct($app);
@@ -38,8 +40,11 @@ class Files extends Command
         return $signature
             ->setName('files')
             ->setDescription('List all files in a directory')
-            ->addArgument(Argument::create('directory')->setDescription('Directory to list files from'))
-        ;
+            ->addArgument(
+                Argument::create('directory')->setDescription(
+                    'Directory to list files from',
+                ),
+            );
     }
 
     /**
@@ -48,7 +53,10 @@ class Files extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $files = $this->filesystem->files($input->getArgument('directory'));
+        $directory = $input->getArgument('directory');
+        $files = $this->filesystem->files(
+            is_scalar($directory) ? (string) $directory : '',
+        );
 
         foreach ($files as $file) {
             $output->writeLine(basename($file));

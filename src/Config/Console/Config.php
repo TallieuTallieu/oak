@@ -16,7 +16,6 @@ class Config extends Command
         return $signature
             ->setName('config')
             ->addSubCommand(Cache::class)
-            ->addSubCommand(ClearCache::class)
-        ;
+            ->addSubCommand(ClearCache::class);
     }
 }

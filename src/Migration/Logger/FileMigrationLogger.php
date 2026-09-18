@@ -30,7 +30,7 @@ class FileMigrationLogger implements MigrationLoggerInterface
      */
     public function __construct(
         FilesystemInterface $filesystem,
-        string $filename
+        string $filename,
     ) {
         $this->filesystem = $filesystem;
         $this->filename = $filename;
@@ -40,6 +40,7 @@ class FileMigrationLogger implements MigrationLoggerInterface
      * Log a message
      *
      * @param string $message
+     * @return void
      */
     private function log(string $message)
     {

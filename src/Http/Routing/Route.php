@@ -13,6 +13,11 @@ use Psr\Http\Message\ServerRequestInterface;
 class Route
 {
     /**
+     * @var MiddlewareRegisterInterface $middlewareRegister
+     */
+    private $middlewareRegister;
+
+    /**
      * @var string $pattern
      */
     private $pattern;
@@ -28,12 +33,12 @@ class Route
     private $method;
 
     /**
-     * @var array $params
+     * @var array<int|string, string> $params
      */
     private $params = [];
 
     /**
-     * @var array $middleware
+     * @var array<int, string> $middleware
      */
     private $middleware = [];
 
@@ -44,8 +49,12 @@ class Route
      * @param string $controller
      * @param string $method
      */
-    public function __construct(MiddlewareRegisterInterface $middlewareRegister, string $pattern, string $controller, string $method)
-    {
+    public function __construct(
+        MiddlewareRegisterInterface $middlewareRegister,
+        string $pattern,
+        string $controller,
+        string $method,
+    ) {
         $this->middlewareRegister = $middlewareRegister;
         $this->pattern = $pattern;
         $this->controller = $controller;
@@ -53,7 +62,8 @@ class Route
     }
 
     /**
-     * @param array $middleware
+     * @param array<int, string> $middleware
+     * @return void
      */
     public function middleware($middleware)
     {
@@ -66,11 +76,14 @@ class Route
      */
     public function matches(string $path)
     {
-        if(preg_match('@^('.$this->pattern.')$@', $path, $this->params)) {
-
-            $this->params = array_filter($this->params, function ($key) {
-                return (! is_int($key));
-            }, ARRAY_FILTER_USE_KEY);
+        if (preg_match('@^(' . $this->pattern . ')$@', $path, $this->params)) {
+            $this->params = array_filter(
+                $this->params,
+                function ($key) {
+                    return !is_int($key);
+                },
+                ARRAY_FILTER_USE_KEY,
+            );
 
             return true;
         }
@@ -84,11 +97,17 @@ class Route
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function execute(ContainerInterface $app, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    public function execute(
+        ContainerInterface $app,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ): ResponseInterface {
         $middleware = [];
         foreach ($this->middleware as $middlewareName) {
-            foreach ($this->middlewareRegister->getMiddleware($middlewareName) as $middlewareClass) {
+            foreach (
+                $this->middlewareRegister->getMiddleware($middlewareName)
+                as $middlewareClass
+            ) {
                 $middleware[] = $app->get($middlewareClass);
             }
         }
@@ -108,7 +127,10 @@ class Route
             'params' => $this->params,
         ]);
 
-        $nextRequestHandler = new NextRequestHandler($middlewareStack, $coreRequestHandler);
+        $nextRequestHandler = new NextRequestHandler(
+            $middlewareStack,
+            $coreRequestHandler,
+        );
 
         return $nextRequestHandler->handle($request);
     }

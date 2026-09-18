@@ -22,8 +22,10 @@ class BaseController
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      */
-    public function __construct(ServerRequestInterface $request, ResponseInterface $response)
-    {
+    public function __construct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ) {
         $this->request = $request;
         $this->response = $response;
     }

@@ -5,6 +5,8 @@ namespace Oak\Console\Command;
 /**
  * Class Argument
  * @package Oak\Console\Command
+ *
+ * @phpstan-consistent-constructor
  */
 class Argument
 {
@@ -22,7 +24,7 @@ class Argument
      * Argument constructor.
      * @param string $name
      */
-    private function __construct(string $name)
+    protected function __construct(string $name)
     {
         $this->name = $name;
     }

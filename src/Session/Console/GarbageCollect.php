@@ -34,14 +34,20 @@ class GarbageCollect extends Command
         return $signature
             ->setName('garbage-collect')
             ->setDescription('Garbage collect all sessions')
-            ->addArgument(Argument::create('maxLifetime')->setDescription('Max lifetime in seconds'))
-            ;
+            ->addArgument(
+                Argument::create('maxLifetime')->setDescription(
+                    'Max lifetime in seconds',
+                ),
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->session->getHandler()
-            ->gc((int) $input->getArgument('maxLifetime'));
+        $maxLifetime = $input->getArgument('maxLifetime');
+
+        $this->session
+            ->getHandler()
+            ->gc(is_numeric($maxLifetime) ? (int) $maxLifetime : 0);
 
         $output->writeLine('Sessions successfully garbage collected');
     }

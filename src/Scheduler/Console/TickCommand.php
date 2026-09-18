@@ -21,8 +21,10 @@ class TickCommand extends Command
      * @param SchedulerInterface $scheduler
      * @param ContainerInterface $app
      */
-    public function __construct(SchedulerInterface $scheduler, ContainerInterface $app)
-    {
+    public function __construct(
+        SchedulerInterface $scheduler,
+        ContainerInterface $app,
+    ) {
         $this->scheduler = $scheduler;
 
         parent::__construct($app);
@@ -34,14 +36,13 @@ class TickCommand extends Command
      */
     protected function createSignature(Signature $signature): Signature
     {
-        return $signature
-            ->setName('tick')
-        ;
+        return $signature->setName('tick');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        while (true) {
+        // Intentionally runs forever, ticking the schedule once a minute
+        for (;;) {
             $this->scheduler->runSchedule($output);
             sleep(60);
         }

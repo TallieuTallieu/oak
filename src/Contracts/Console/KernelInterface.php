@@ -11,6 +11,7 @@ interface KernelInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return void
      * @throws \Exception
      */
     public function handle(InputInterface $input, OutputInterface $output);
@@ -18,7 +19,8 @@ interface KernelInterface
     /**
      * Register a command
      *
-     * @param $command
+     * @param \Oak\Console\Command\Command|class-string<\Oak\Console\Command\Command> $command
+     * @return void
      */
     public function registerCommand($command);
 }

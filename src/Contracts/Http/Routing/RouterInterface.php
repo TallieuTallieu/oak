@@ -7,5 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface RouterInterface
 {
-    public function dispatch(ServerRequestInterface $request): ResponseInterface;
+    public function dispatch(
+        ServerRequestInterface $request,
+    ): ResponseInterface;
 }

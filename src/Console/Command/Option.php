@@ -5,6 +5,8 @@ namespace Oak\Console\Command;
 /**
  * Class Option
  * @package Oak\Console\Command
+ *
+ * @phpstan-consistent-constructor
  */
 class Option
 {
@@ -37,7 +39,7 @@ class Option
      * @param string $name
      * @param string $alias
      */
-    private function __construct(string $name, string $alias = '')
+    protected function __construct(string $name, string $alias = '')
     {
         $this->name = $name;
         $this->alias = $alias;
@@ -104,7 +106,7 @@ class Option
     }
 
     /**
-     * @param $default
+     * @param bool $default
      * @return $this
      */
     public function setDefault($default)

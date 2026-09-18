@@ -32,8 +32,11 @@ class FileLogger implements LoggerInterface
      * @param string $filename
      * @param FilesystemInterface $filesystem
      */
-    public function __construct(string $filename, FilesystemInterface $filesystem, RepositoryInterface $config)
-    {
+    public function __construct(
+        string $filename,
+        FilesystemInterface $filesystem,
+        RepositoryInterface $config,
+    ) {
         $this->filename = $filename;
         $this->filesystem = $filesystem;
         $this->config = $config;
@@ -44,6 +47,14 @@ class FileLogger implements LoggerInterface
      */
     public function log(string $text)
     {
-        $this->filesystem->append($this->filename, date($this->config->get('logger.date_format', 'd/m/Y H:i')).' - '.$text."\n");
+        $dateFormat = $this->config->get('logger.date_format', 'd/m/Y H:i');
+
+        $this->filesystem->append(
+            $this->filename,
+            date(is_string($dateFormat) ? $dateFormat : 'd/m/Y H:i') .
+                ' - ' .
+                $text .
+                "\n",
+        );
     }
 }

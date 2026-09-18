@@ -24,7 +24,7 @@ class UpdateCommand extends Command
      */
     public function __construct(
         MigrationManager $manager,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->manager = $manager;
         parent::__construct($app);
@@ -36,8 +36,8 @@ class UpdateCommand extends Command
             ->setName('update')
             ->addOption(
                 Option::create('migrator', 'm')->setDescription(
-                    'Specify a specific migrator'
-                )
+                    'Specify a specific migrator',
+                ),
             );
     }
 

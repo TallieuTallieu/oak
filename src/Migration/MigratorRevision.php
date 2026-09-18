@@ -57,12 +57,12 @@ class MigratorRevision implements RevisionInterface
         Migrator|string $migrator,
         int $toVersion,
         int $fromVersion = 0,
-        ?MigrationManager $manager = null
+        ?MigrationManager $manager = null,
     ) {
         if (is_string($migrator)) {
             if (!$manager) {
                 throw new InvalidArgumentException(
-                    'A migrator name requires a MigrationManager to resolve it from'
+                    'A migrator name requires a MigrationManager to resolve it from',
                 );
             }
 
@@ -91,16 +91,22 @@ class MigratorRevision implements RevisionInterface
         MigrationManager $manager,
         string $name,
         int $toVersion,
-        int $fromVersion = 0
+        int $fromVersion = 0,
     ): self {
         return new self($name, $toVersion, $fromVersion, $manager);
     }
 
+    /**
+     * @return void
+     */
     public function up()
     {
         $this->getMigrator()->rollTo($this->toVersion);
     }
 
+    /**
+     * @return void
+     */
     public function down()
     {
         $this->getMigrator()->rollTo($this->fromVersion);
@@ -127,7 +133,11 @@ class MigratorRevision implements RevisionInterface
      */
     private function getMigratorName(): string
     {
-        return $this->migratorName ?? $this->migrator->getName();
+        if ($this->migratorName !== null) {
+            return $this->migratorName;
+        }
+
+        return $this->getMigrator()->getName();
     }
 
     /**
@@ -136,13 +146,19 @@ class MigratorRevision implements RevisionInterface
     private function getMigrator(): Migrator
     {
         if (!$this->migrator) {
+            if ($this->migratorName === null || $this->manager === null) {
+                throw new RuntimeException(
+                    'No migrator or migrator name was provided',
+                );
+            }
+
             $this->migrator = $this->manager->getMigrator($this->migratorName);
 
             if (!$this->migrator) {
                 throw new RuntimeException(
                     'No migrator named \'' .
                         $this->migratorName .
-                        '\' is registered'
+                        '\' is registered',
                 );
             }
         }

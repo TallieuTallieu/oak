@@ -7,13 +7,13 @@ use Oak\Contracts\Config\RepositoryInterface;
 class Repository implements RepositoryInterface
 {
     /**
-     * @var array $config
+     * @var array<string, mixed> $config
      */
     private $config;
 
     /**
      * Repository constructor.
-     * @param array $config
+     * @param array<string, mixed> $config
      */
     public function __construct(array $config = [])
     {
@@ -21,7 +21,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @param array $config
+     * @param array<string, mixed> $config
      * @return mixed|void
      */
     public function setAll(array $config = [])
@@ -31,8 +31,8 @@ class Repository implements RepositoryInterface
 
     /**
      * @param string $key
-     * @param null $default
-     * @return mixed|null
+     * @param mixed $default
+     * @return mixed
      */
     public function get(string $key, $default = null)
     {
@@ -41,7 +41,7 @@ class Repository implements RepositoryInterface
         array_shift($arr);
 
         foreach ($arr as $keyPart) {
-            if (! isset($config[$keyPart])) {
+            if (!is_array($config) || !isset($config[$keyPart])) {
                 return $default;
             }
             $config = $config[$keyPart];
@@ -69,7 +69,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function all(): array
     {

@@ -14,21 +14,37 @@ class SessionServiceProvider extends ServiceProvider
     {
         $config = $app->get(RepositoryInterface::class);
 
-        $app->singleton(\SessionHandlerInterface::class, $config->get('session.handler', FileSessionHandler::class));
-        $app->singleton(Session::class, Session::class);
-        $app->singleton(SessionIdentifierInterface::class, SessionIdentifier::class);
+        $handler = $config->get('session.handler', FileSessionHandler::class);
 
-        $app->whenAsksGive(FileSessionHandler::class, 'path', SessionPath::resolve($app, $config));
-        $app->whenAsksGive(Session::class, 'name', $config->get('session.name', 'app'));
+        $app->singleton(
+            \SessionHandlerInterface::class,
+            is_string($handler) ? $handler : FileSessionHandler::class,
+        );
+        $app->singleton(Session::class, Session::class);
+        $app->singleton(
+            SessionIdentifierInterface::class,
+            SessionIdentifier::class,
+        );
+
+        $app->whenAsksGive(
+            FileSessionHandler::class,
+            'path',
+            SessionPath::resolve($app, $config),
+        );
+        $app->whenAsksGive(
+            Session::class,
+            'name',
+            $config->get('session.name', 'app'),
+        );
     }
 
     public function boot(ContainerInterface $app)
     {
         // Register console command
         if ($app->isRunningInConsole()) {
-            $app->get(KernelInterface::class)
-                ->registerCommand(\Oak\Session\Console\Session::class)
-            ;
+            $app->get(KernelInterface::class)->registerCommand(
+                \Oak\Session\Console\Session::class,
+            );
         }
     }
 }

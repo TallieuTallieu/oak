@@ -32,21 +32,21 @@ class Signature
     /**
      * An array holding the arguments
      *
-     * @var array
+     * @var array<int, Argument>
      */
     private $arguments = [];
 
     /**
      * An array holding the possible options
      *
-     * @var array
+     * @var array<int, Option>
      */
     private $options = [];
 
     /**
      * An array holding subcommands
      *
-     * @var array
+     * @var array<string, Command>
      */
     private $subCommands = [];
 
@@ -91,6 +91,7 @@ class Signature
 
     /**
      * @param string $description
+     * @return $this
      */
     public function setDescription(string $description)
     {
@@ -112,6 +113,7 @@ class Signature
      * Add an argument
      *
      * @param Argument $argument
+     * @return $this
      */
     public function addArgument(Argument $argument)
     {
@@ -122,7 +124,7 @@ class Signature
     /**
      * Gets all arguments
      *
-     * @return array
+     * @return array<int, Argument>
      */
     public function getArguments(): array
     {
@@ -132,11 +134,12 @@ class Signature
     /**
      * Add a subcommand
      *
-     * @param $command
+     * @param Command|class-string<Command> $command
+     * @return $this
      */
     public function addSubCommand($command)
     {
-        if (! $command instanceof Command) {
+        if (!($command instanceof Command)) {
             $command = $this->app->get($command);
         }
 
@@ -158,7 +161,7 @@ class Signature
     /**
      * Gets all subcommands
      *
-     * @return array
+     * @return array<string, Command>
      */
     public function getSubCommands(): array
     {
@@ -178,6 +181,7 @@ class Signature
      * Add an option
      *
      * @param Option $option
+     * @return $this
      */
     public function addOption(Option $option)
     {
@@ -188,7 +192,7 @@ class Signature
     /**
      * Gets all options
      *
-     * @return array
+     * @return array<int, Option>
      */
     public function getOptions(): array
     {

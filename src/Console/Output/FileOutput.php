@@ -25,8 +25,10 @@ class FileOutput implements OutputInterface
      * FileOutput constructor.
      * @param FilesystemInterface $filesystem
      */
-    public function __construct(string $filename, FilesystemInterface $filesystem)
-    {
+    public function __construct(
+        string $filename,
+        FilesystemInterface $filesystem,
+    ) {
         $this->filename = $filename;
         $this->filesystem = $filesystem;
     }
@@ -37,7 +39,7 @@ class FileOutput implements OutputInterface
      */
     public function writeLine(string $message, int $type = self::TYPE_PLAIN)
     {
-        $this->filesystem->append($this->filename, $message."\n");
+        $this->filesystem->append($this->filename, $message . "\n");
     }
 
     /**

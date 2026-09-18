@@ -41,7 +41,7 @@ class Dispatcher implements DispatcherInterface
     public function addListener(
         string $eventName,
         callable $listener,
-        bool $isolated = false
+        bool $isolated = false,
     ) {
         if (!$this->hasListeners($eventName)) {
             $this->listeners[$eventName] = [];
@@ -77,7 +77,7 @@ class Dispatcher implements DispatcherInterface
             function (array $entry) {
                 return $entry[0];
             },
-            $this->listeners[$eventName] ?? []
+            $this->listeners[$eventName] ?? [],
         );
     }
 
@@ -115,7 +115,7 @@ class Dispatcher implements DispatcherInterface
      */
     public function dispatchIsolated(
         string $eventName,
-        ?EventInterface $event = null
+        ?EventInterface $event = null,
     ) {
         $this->call($eventName, $event, true);
     }
@@ -133,7 +133,7 @@ class Dispatcher implements DispatcherInterface
     private function call(
         string $eventName,
         ?EventInterface $event,
-        bool $isolateAll
+        bool $isolateAll,
     ) {
         $unhandled = null;
 
@@ -148,7 +148,7 @@ class Dispatcher implements DispatcherInterface
                         ($this->exceptionHandler)(
                             $throwable,
                             $eventName,
-                            $listener
+                            $listener,
                         );
                     } elseif ($unhandled === null) {
                         // Nowhere to report this, so keep it and let it surface

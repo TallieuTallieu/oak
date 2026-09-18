@@ -110,7 +110,7 @@ test('a valid session id round-trips through the handler', function () {
 test('reading an unknown session id yields an empty string', function () {
     $handler = new FileSessionHandler(
         '/sessions',
-        new FileSessionHandlerTestFilesystem()
+        new FileSessionHandlerTestFilesystem(),
     );
 
     expect($handler->read('unknown'))->toBe('');

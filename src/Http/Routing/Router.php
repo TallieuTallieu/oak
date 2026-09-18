@@ -40,7 +40,7 @@ class Router implements RouterInterface, MiddlewareRegisterInterface
     public function __construct(
         ContainerInterface $app,
         RepositoryInterface $config,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
     ) {
         $this->app = $app;
         $this->config = $config;
@@ -57,7 +57,7 @@ class Router implements RouterInterface, MiddlewareRegisterInterface
 
         $path = substr(
             $request->getUri()->getPath(),
-            strlen(is_string($httpPath) ? $httpPath : '')
+            strlen(is_string($httpPath) ? $httpPath : ''),
         );
         $path = ltrim($path, '/');
 
@@ -71,7 +71,7 @@ class Router implements RouterInterface, MiddlewareRegisterInterface
                     $request,
                     $this->responseFactory
                         ->createResponse(200)
-                        ->withHeader('Content-Type', 'text/html')
+                        ->withHeader('Content-Type', 'text/html'),
                 );
             }
         }

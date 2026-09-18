@@ -18,7 +18,7 @@ class FilesystemServiceProvider extends ServiceProvider
     {
         if ($app->isRunningInConsole()) {
             $app->get(KernelInterface::class)->registerCommand(
-                Filesystem::class
+                Filesystem::class,
             );
         }
     }

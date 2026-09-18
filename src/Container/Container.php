@@ -157,7 +157,7 @@ class Container implements ContainerInterface
                 $implementation = $contract;
             } else {
                 throw new Exception(
-                    'Could not create dependency with contract: ' . $contract
+                    'Could not create dependency with contract: ' . $contract,
                 );
             }
         } else {
@@ -171,7 +171,7 @@ class Container implements ContainerInterface
         ) {
             $arguments = array_merge(
                 $this->arguments[$implementation],
-                $arguments
+                $arguments,
             );
         }
 
@@ -182,7 +182,7 @@ class Container implements ContainerInterface
 
         if (is_string($implementation) && !class_exists($implementation)) {
             throw new Exception(
-                'Could not create dependency with contract: ' . $contract
+                'Could not create dependency with contract: ' . $contract,
             );
         }
 
@@ -213,7 +213,7 @@ class Container implements ContainerInterface
                         'Could not provide argument "' .
                             $parameter->getName() .
                             '" to ' .
-                            $contract
+                            $contract,
                     );
                 }
 
@@ -292,7 +292,7 @@ class Container implements ContainerInterface
                 'Could not provide argument "' .
                     $parameter->getName() .
                     '" to ' .
-                    $contract
+                    $contract,
             );
         }
 
@@ -318,7 +318,7 @@ class Container implements ContainerInterface
     public function getEnvPath(): string
     {
         throw new Exception(
-            'Path methods are only available on Application instances'
+            'Path methods are only available on Application instances',
         );
     }
 
@@ -331,7 +331,7 @@ class Container implements ContainerInterface
     public function getConfigPath(): string
     {
         throw new Exception(
-            'Path methods are only available on Application instances'
+            'Path methods are only available on Application instances',
         );
     }
 
@@ -344,7 +344,7 @@ class Container implements ContainerInterface
     public function getCachePath(): string
     {
         throw new Exception(
-            'Path methods are only available on Application instances'
+            'Path methods are only available on Application instances',
         );
     }
 }

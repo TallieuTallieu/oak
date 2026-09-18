@@ -23,8 +23,8 @@ class ResponseEmitter implements ResponseEmitterInterface
                     'HTTP/%s %s %s',
                     $response->getProtocolVersion(),
                     $response->getStatusCode(),
-                    $response->getReasonPhrase()
-                )
+                    $response->getReasonPhrase(),
+                ),
             );
 
             // Headers

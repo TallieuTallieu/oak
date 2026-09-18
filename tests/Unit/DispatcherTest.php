@@ -56,7 +56,7 @@ test('stopping propagation halts later listeners', function () {
     $calls = [];
 
     $dispatcher->addListener('created', function (?EventInterface $event) use (
-        &$calls
+        &$calls,
     ) {
         $calls[] = 'first';
         $event?->stopPropagation();
@@ -95,10 +95,10 @@ test(
 
         expect(fn() => $dispatcher->dispatch('created'))->toThrow(
             RuntimeException::class,
-            'listener failed'
+            'listener failed',
         );
         expect($calls)->toBe([]);
-    }
+    },
 );
 
 test('an isolated listener does not stop the listeners after it', function () {
@@ -111,7 +111,7 @@ test('an isolated listener does not stop the listeners after it', function () {
         function () {
             throw new RuntimeException('listener failed');
         },
-        true
+        true,
     );
     $dispatcher->addListener('created', function () use (&$calls) {
         $calls[] = 'second';
@@ -135,7 +135,7 @@ test(
         $dispatcher->setExceptionHandler(function (
             Throwable $throwable,
             string $eventName,
-            callable $listener
+            callable $listener,
         ) use (&$received) {
             $received = [$throwable->getMessage(), $eventName, $listener];
         });
@@ -144,7 +144,7 @@ test(
         $dispatcher->dispatch('created');
 
         expect($received)->toBe(['listener failed', 'created', $failing]);
-    }
+    },
 );
 
 test('dispatchIsolated isolates every listener of the event', function () {
@@ -185,10 +185,10 @@ test(
 
         expect(fn() => $dispatcher->dispatchIsolated('created'))->toThrow(
             RuntimeException::class,
-            'first failed'
+            'first failed',
         );
         expect($calls)->toBe(['second']);
-    }
+    },
 );
 
 test(
@@ -200,5 +200,5 @@ test(
         $dispatcher->addListener('created', $listener, true);
 
         expect($dispatcher->getListeners('created'))->toBe([$listener]);
-    }
+    },
 );

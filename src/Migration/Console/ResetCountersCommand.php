@@ -24,7 +24,7 @@ class ResetCountersCommand extends Command
      */
     public function __construct(
         MigrationManager $manager,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->manager = $manager;
         parent::__construct($app);
@@ -35,12 +35,12 @@ class ResetCountersCommand extends Command
         return $signature
             ->setName('reset-counters')
             ->setDescription(
-                'Reset migration counters to 0 without running any migrations'
+                'Reset migration counters to 0 without running any migrations',
             )
             ->addOption(
                 Option::create('migrator', 'm')->setDescription(
-                    'Specify a specific migrator'
-                )
+                    'Specify a specific migrator',
+                ),
             );
     }
 
@@ -49,7 +49,7 @@ class ResetCountersCommand extends Command
         if (!count($this->manager->getMigrators())) {
             $output->writeLine(
                 'No migrators registered',
-                OutputInterface::TYPE_ERROR
+                OutputInterface::TYPE_ERROR,
             );
             return;
         }
@@ -63,7 +63,7 @@ class ResetCountersCommand extends Command
                 $migrator->resetCounter();
 
                 $output->writeLine(
-                    'Reset counter for migrator: ' . $migrator->getName()
+                    'Reset counter for migrator: ' . $migrator->getName(),
                 );
                 $resetCount++;
 
@@ -81,19 +81,19 @@ class ResetCountersCommand extends Command
                             ? (string) $migratorName
                             : '') .
                         '" not found',
-                    OutputInterface::TYPE_ERROR
+                    OutputInterface::TYPE_ERROR,
                 );
             } else {
                 $output->writeLine(
                     'No migrators found to reset',
-                    OutputInterface::TYPE_ERROR
+                    OutputInterface::TYPE_ERROR,
                 );
             }
         } else {
             $output->writeLine(
                 'Successfully reset ' .
                     $resetCount .
-                    ' migrator counter(s) to 0'
+                    ' migrator counter(s) to 0',
             );
         }
     }

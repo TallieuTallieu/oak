@@ -39,7 +39,7 @@ class SessionGarbageLottery implements MiddlewareInterface
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         // Garbage collection lottery
         $lottery = $this->config->get('session.lottery', 200);

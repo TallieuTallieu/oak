@@ -24,7 +24,7 @@ class JsonVersionStorage implements VersionStorageInterface
      */
     public function __construct(
         FilesystemInterface $filesystem,
-        string $filename
+        string $filename,
     ) {
         $this->filesystem = $filesystem;
         $this->filename = $filename;
@@ -59,7 +59,7 @@ class JsonVersionStorage implements VersionStorageInterface
 
         $this->filesystem->put(
             $this->filename,
-            $encoded === false ? '{}' : $encoded
+            $encoded === false ? '{}' : $encoded,
         );
     }
 
@@ -73,7 +73,7 @@ class JsonVersionStorage implements VersionStorageInterface
         $contents = $this->filesystem->get($this->filename);
         $versionData = json_decode(
             $contents === false ? '{}' : $contents,
-            true
+            true,
         );
 
         if (!is_array($versionData)) {

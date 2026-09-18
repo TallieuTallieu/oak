@@ -11,7 +11,7 @@ class TrailingSlashMiddleware implements MiddlewareInterface
 {
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         $path = $request->getUri()->getPath();
 

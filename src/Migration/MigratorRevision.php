@@ -57,12 +57,12 @@ class MigratorRevision implements RevisionInterface
         Migrator|string $migrator,
         int $toVersion,
         int $fromVersion = 0,
-        ?MigrationManager $manager = null
+        ?MigrationManager $manager = null,
     ) {
         if (is_string($migrator)) {
             if (!$manager) {
                 throw new InvalidArgumentException(
-                    'A migrator name requires a MigrationManager to resolve it from'
+                    'A migrator name requires a MigrationManager to resolve it from',
                 );
             }
 
@@ -91,7 +91,7 @@ class MigratorRevision implements RevisionInterface
         MigrationManager $manager,
         string $name,
         int $toVersion,
-        int $fromVersion = 0
+        int $fromVersion = 0,
     ): self {
         return new self($name, $toVersion, $fromVersion, $manager);
     }
@@ -148,7 +148,7 @@ class MigratorRevision implements RevisionInterface
         if (!$this->migrator) {
             if ($this->migratorName === null || $this->manager === null) {
                 throw new RuntimeException(
-                    'No migrator or migrator name was provided'
+                    'No migrator or migrator name was provided',
                 );
             }
 
@@ -158,7 +158,7 @@ class MigratorRevision implements RevisionInterface
                 throw new RuntimeException(
                     'No migrator named \'' .
                         $this->migratorName .
-                        '\' is registered'
+                        '\' is registered',
                 );
             }
         }

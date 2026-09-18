@@ -48,7 +48,7 @@ class Cookie implements CookieInterface
         string $path,
         bool $secure,
         bool $httpOnly,
-        string $sameSite = 'Lax'
+        string $sameSite = 'Lax',
     ) {
         $this->path = $path;
         $this->secure = $secure;
@@ -74,7 +74,7 @@ class Cookie implements CookieInterface
                 'Invalid cookie SameSite value "' .
                     $sameSite .
                     '", expected one of: ' .
-                    implode(', ', self::SAME_SITE_VALUES)
+                    implode(', ', self::SAME_SITE_VALUES),
             ),
         };
 
@@ -84,7 +84,7 @@ class Cookie implements CookieInterface
         if ($normalized === 'None' && !$secure) {
             throw new \InvalidArgumentException(
                 'Cookie SameSite "None" requires the cookie to be secure. ' .
-                    'Set "cookie.secure" to true or pick another SameSite value.'
+                    'Set "cookie.secure" to true or pick another SameSite value.',
             );
         }
 
@@ -113,7 +113,7 @@ class Cookie implements CookieInterface
 
         if ($value === false) {
             throw new \InvalidArgumentException(
-                'Cookie value could not be encoded as JSON'
+                'Cookie value could not be encoded as JSON',
             );
         }
 

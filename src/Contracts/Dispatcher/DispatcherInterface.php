@@ -18,7 +18,7 @@ interface DispatcherInterface
     public function addListener(
         string $eventName,
         callable $listener,
-        bool $isolated = false
+        bool $isolated = false,
     );
 
     /**
@@ -53,6 +53,6 @@ interface DispatcherInterface
      */
     public function dispatchIsolated(
         string $eventName,
-        ?EventInterface $event = null
+        ?EventInterface $event = null,
     );
 }

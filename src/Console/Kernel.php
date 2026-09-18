@@ -64,8 +64,8 @@ class Kernel extends Command implements KernelInterface
             ->setName('oak')
             ->addOption(
                 Option::create('version', 'v')->setDescription(
-                    'Display the version of Oak framework'
-                )
+                    'Display the version of Oak framework',
+                ),
             );
     }
 
@@ -82,7 +82,7 @@ class Kernel extends Command implements KernelInterface
             $output->newline();
             $output->writeLine(
                 'Oak framework version ' . Application::VERSION,
-                OutputInterface::TYPE_INFO
+                OutputInterface::TYPE_INFO,
             );
             $output->writeLine('By Rein Van Oyen');
             $output->newline();

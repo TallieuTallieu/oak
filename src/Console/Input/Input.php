@@ -210,7 +210,7 @@ abstract class Input implements InputInterface
             foreach ($definitions as $definition) {
                 $optionPosition = array_search(
                     $definition,
-                    $this->rawArguments
+                    $this->rawArguments,
                 );
 
                 if ($optionPosition !== false) {
@@ -220,7 +220,7 @@ abstract class Input implements InputInterface
                         substr(
                             $this->rawArguments[$optionPosition + 1],
                             0,
-                            strlen('-')
+                            strlen('-'),
                         ) !== '-'
                     ) {
                         // We also found a value for the option
@@ -230,12 +230,12 @@ abstract class Input implements InputInterface
                         array_splice(
                             $this->rawArguments,
                             $optionPosition + 1,
-                            1
+                            1,
                         );
                     } else {
                         $this->setOption(
                             $option->getName(),
-                            $option->getDefault()
+                            $option->getDefault(),
                         );
                     }
 
@@ -253,7 +253,7 @@ abstract class Input implements InputInterface
             if (isset($this->rawArguments[$position])) {
                 $this->setArgument(
                     $argument->getName(),
-                    $this->rawArguments[$position]
+                    $this->rawArguments[$position],
                 );
             } else {
                 $this->missingArguments[] = $argument->getName();

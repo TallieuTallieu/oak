@@ -31,7 +31,7 @@ class StartSession implements MiddlewareInterface
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         // Pick up the session id from the cookie, or mint one
         $this->session->start();

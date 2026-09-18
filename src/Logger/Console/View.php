@@ -32,7 +32,7 @@ class View extends Command
     public function __construct(
         RepositoryInterface $config,
         FilesystemInterface $filesystem,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->config = $config;
         $this->filesystem = $filesystem;
@@ -51,8 +51,8 @@ class View extends Command
             ->setDescription('View the log')
             ->addArgument(
                 Argument::create('lines')->setDescription(
-                    'Amount of lines to display'
-                )
+                    'Amount of lines to display',
+                ),
             );
     }
 
@@ -64,7 +64,7 @@ class View extends Command
     {
         $filename = $this->config->get('logger.filename', 'logs/log.txt');
         $lines = $this->filesystem->get(
-            is_string($filename) ? $filename : 'logs/log.txt'
+            is_string($filename) ? $filename : 'logs/log.txt',
         );
 
         $linesArray = explode("\n", $lines === false ? '' : $lines);

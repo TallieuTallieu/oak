@@ -25,7 +25,7 @@ trait MiddlewareRegisterTrait
 
         $this->middlewareGroups[$name] = array_merge(
             $this->middlewareGroups[$name],
-            $middlewares
+            $middlewares,
         );
     }
 

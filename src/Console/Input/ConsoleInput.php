@@ -50,7 +50,7 @@ class ConsoleInput extends Input
             $this->rawArguments = array_values(
                 array_filter($argv, static function ($argument) {
                     return is_string($argument);
-                })
+                }),
             );
         }
 
@@ -67,7 +67,7 @@ class ConsoleInput extends Input
     {
         if (count($this->missingArguments)) {
             throw new InvalidArgumentException(
-                'Missing argument(s) ' . implode(', ', $this->missingArguments)
+                'Missing argument(s) ' . implode(', ', $this->missingArguments),
             );
         }
     }

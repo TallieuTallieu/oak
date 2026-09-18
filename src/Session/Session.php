@@ -105,7 +105,7 @@ class Session
         ?SessionIdentifierInterface $identifier = null,
         ?CookieInterface $cookie = null,
         string $cookiePrefix = 'session',
-        int $identifierLength = 40
+        int $identifierLength = 40,
     ) {
         $this->name = $name;
         $this->handler = $handler;
@@ -294,7 +294,7 @@ class Session
             throw new \RuntimeException(
                 'This session was constructed without a ' .
                     SessionIdentifierInterface::class .
-                    ', so it cannot mint a session id.'
+                    ', so it cannot mint a session id.',
             );
         }
 
@@ -311,7 +311,7 @@ class Session
             throw new \RuntimeException(
                 'This session was constructed without a ' .
                     CookieInterface::class .
-                    ', so it cannot manage its own cookie.'
+                    ', so it cannot manage its own cookie.',
             );
         }
 

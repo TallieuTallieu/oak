@@ -24,7 +24,7 @@ class SchedulerServiceProvider extends ServiceProvider
     {
         if ($app->isRunningInConsole()) {
             $app->get(KernelInterface::class)->registerCommand(
-                SchedulerCommand::class
+                SchedulerCommand::class,
             );
         }
     }

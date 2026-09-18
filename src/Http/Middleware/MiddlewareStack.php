@@ -46,13 +46,13 @@ class MiddlewareStack
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $requestHandler
+        RequestHandlerInterface $requestHandler,
     ): ResponseInterface {
         $this->currentIndex = $this->currentIndex + 1;
 
         return $this->middleware[$this->currentIndex]->process(
             $request,
-            $requestHandler
+            $requestHandler,
         );
     }
 }

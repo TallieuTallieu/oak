@@ -26,7 +26,7 @@ class Kernel implements KernelInterface
      */
     public function __construct(
         RouterInterface $router,
-        ResponseEmitterInterface $responseEmitter
+        ResponseEmitterInterface $responseEmitter,
     ) {
         $this->router = $router;
         $this->responseEmitter = $responseEmitter;

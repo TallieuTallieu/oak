@@ -24,7 +24,7 @@ class Log extends Command
      */
     public function __construct(
         LoggerInterface $logger,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->logger = $logger;
 
@@ -42,8 +42,8 @@ class Log extends Command
             ->setDescription('Write a message to the log')
             ->addArgument(
                 Argument::create('message')->setDescription(
-                    'The message to log'
-                )
+                    'The message to log',
+                ),
             );
     }
 

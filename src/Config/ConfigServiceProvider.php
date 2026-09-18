@@ -35,7 +35,7 @@ class ConfigServiceProvider extends ServiceProvider
         foreach ($fs->files($app->getConfigPath()) as $file) {
             $config->set(
                 str_replace('.php', '', basename($file)),
-                require $file
+                require $file,
             );
         }
 

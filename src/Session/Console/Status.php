@@ -33,7 +33,7 @@ class Status extends Command
     public function __construct(
         FilesystemInterface $filesystem,
         RepositoryInterface $config,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->filesystem = $filesystem;
         $this->config = $config;
@@ -59,13 +59,13 @@ class Status extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $sessionFiles = $this->filesystem->files(
-            SessionPath::resolve($this->app, $this->config)
+            SessionPath::resolve($this->app, $this->config),
         );
 
         $output->writeLine('SESSION STATUS');
         $output->writeLine(
             'Active sessions: ' . count($sessionFiles),
-            OutputInterface::TYPE_INFO
+            OutputInterface::TYPE_INFO,
         );
     }
 }

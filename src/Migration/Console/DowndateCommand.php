@@ -24,7 +24,7 @@ class DowndateCommand extends Command
      */
     public function __construct(
         MigrationManager $manager,
-        ContainerInterface $app
+        ContainerInterface $app,
     ) {
         $this->manager = $manager;
         parent::__construct($app);
@@ -36,8 +36,8 @@ class DowndateCommand extends Command
             ->setName('downdate')
             ->addOption(
                 Option::create('migrator', 'm')->setDescription(
-                    'Specify a specific migrator'
-                )
+                    'Specify a specific migrator',
+                ),
             );
     }
 

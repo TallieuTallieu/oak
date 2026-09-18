@@ -109,7 +109,7 @@ function makeSession(): array
         new SessionTestIdentifier(),
         $cookie,
         'session',
-        40
+        40,
     );
 
     return [$session, $handler, $cookie];
@@ -163,7 +163,7 @@ test('regenerate mints a new id and carries the data over', function () {
     expect($session->getId())->not->toBe($oldId);
     expect($session->get('user'))->toBe(42);
     expect($handler->storage[(string) $session->getId()])->toBe(
-        serialize(['user' => 42])
+        serialize(['user' => 42]),
     );
 });
 
@@ -183,7 +183,7 @@ test(
         expect($handler->destroyed)->toBe([$oldId]);
         expect($handler->storage)->not->toHaveKey($oldId);
         expect($cookie->jar['session_app'])->toBe($session->getId());
-    }
+    },
 );
 
 test('regenerate can keep the old handler entry', function () {
@@ -231,7 +231,7 @@ test('a session without an identifier cannot mint an id', function () {
         'app',
         new SessionTestHandler(),
         null,
-        new SessionTestCookie()
+        new SessionTestCookie(),
     );
 
     expect(fn() => $session->start())->toThrow(RuntimeException::class);

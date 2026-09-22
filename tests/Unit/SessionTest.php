@@ -2,6 +2,8 @@
 
 use Oak\Contracts\Cookie\CookieInterface;
 use Oak\Contracts\Session\SessionIdentifierInterface;
+use Oak\Filesystem\LocalFilesystem;
+use Oak\Session\FileSessionHandler;
 use Oak\Session\Session;
 
 /**
@@ -236,3 +238,142 @@ test('a session without an identifier cannot mint an id', function () {
 
     expect(fn() => $session->start())->toThrow(RuntimeException::class);
 });
+
+test(
+    'rotation recovers a missing session file and persists login data',
+    function (bool $previouslyWritten) {
+        $path = sys_get_temp_dir() . '/oak-session-' . bin2hex(random_bytes(8));
+        mkdir($path);
+        $handler = new FileSessionHandler($path, new LocalFilesystem());
+        $cookie = new SessionTestCookie();
+        $cookie->jar['session_app'] = 'stale123';
+
+        set_error_handler(static function (
+            int $severity,
+            string $message,
+            string $file,
+            int $line,
+        ): never {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
+
+        try {
+            if ($previouslyWritten) {
+                $handler->write('stale123', serialize(['expired' => true]));
+                unlink($path . '/stale123');
+            }
+
+            $session = new Session(
+                'app',
+                $handler,
+                new SessionTestIdentifier(),
+                $cookie,
+            );
+            $session->start();
+            $session->regenerate();
+            $session->set('user', 42);
+            $session->save();
+
+            expect($cookie->jar['session_app'])->toBe($session->getId());
+            expect($session->getId())->not->toBe('stale123');
+            expect(file_exists($path . '/stale123'))->toBeFalse();
+
+            $nextRequest = new Session(
+                'app',
+                $handler,
+                new SessionTestIdentifier(),
+                $cookie,
+            );
+            $nextRequest->start();
+            expect($nextRequest->get('user'))->toBe(42);
+            expect($nextRequest->has('expired'))->toBeFalse();
+        } finally {
+            restore_error_handler();
+            foreach (glob($path . '/*') ?: [] as $file) {
+                unlink($file);
+            }
+            rmdir($path);
+        }
+    },
+)->with(['never written' => false, 'removed after writing' => true]);
+
+test(
+    'destroy clears the cookie and data when the session file is already gone',
+    function () {
+        $path = sys_get_temp_dir() . '/oak-session-' . bin2hex(random_bytes(8));
+        mkdir($path);
+        $handler = new FileSessionHandler($path, new LocalFilesystem());
+        $cookie = new SessionTestCookie();
+        $session = new Session(
+            'app',
+            $handler,
+            new SessionTestIdentifier(),
+            $cookie,
+        );
+
+        set_error_handler(static function (
+            int $severity,
+            string $message,
+            string $file,
+            int $line,
+        ): never {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
+
+        try {
+            $session->start();
+            $session->set('user', 42);
+            $session->save();
+            $id = (string) $session->getId();
+            unlink($path . '/' . $id);
+
+            $session->destroy();
+            expect($session->getId())->toBeNull();
+            expect($session->has('user'))->toBeFalse();
+            expect($cookie->has('session_app'))->toBeFalse();
+            expect($handler->destroy($id))->toBeTrue();
+            $session->destroy();
+            $session->save();
+            expect(file_exists($path . '/' . $id))->toBeFalse();
+        } finally {
+            restore_error_handler();
+            foreach (glob($path . '/*') ?: [] as $file) {
+                unlink($file);
+            }
+            rmdir($path);
+        }
+    },
+);
+
+test(
+    'rotation updates the cookie before surfacing an old-entry cleanup failure',
+    function () {
+        $handler = new class extends SessionTestHandler {
+            public function destroy($id): bool
+            {
+                throw new RuntimeException('Old session cleanup failed');
+            }
+        };
+        $cookie = new SessionTestCookie();
+        $session = new Session(
+            'app',
+            $handler,
+            new SessionTestIdentifier(),
+            $cookie,
+        );
+        $session->start();
+        $session->set('user', 42);
+        $session->save();
+        $oldId = (string) $session->getId();
+
+        expect(fn() => $session->regenerate())->toThrow(
+            RuntimeException::class,
+            'Old session cleanup failed',
+        );
+        $newId = (string) $session->getId();
+        expect($newId)->not->toBe($oldId);
+        expect($cookie->jar['session_app'])->toBe($newId);
+        expect($handler->storage[$newId])->toBe(serialize(['user' => 42]));
+        expect($handler->storage)->toHaveKey($oldId);
+    },
+);

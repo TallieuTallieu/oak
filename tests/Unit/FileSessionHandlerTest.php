@@ -1,6 +1,7 @@
 <?php
 
 use Oak\Contracts\Filesystem\FilesystemInterface;
+use Oak\Filesystem\LocalFilesystem;
 use Oak\Session\FileSessionHandler;
 
 /**
@@ -137,5 +138,72 @@ test('an unsafe session id never reaches the filesystem', function () {
 
         expect($filesystem->touched)->toBe([], $label);
         expect($filesystem->files)->toBe([], $label);
+    }
+});
+
+test(
+    'destroy tolerates a file disappearing between checking and deleting',
+    function () {
+        $path = sys_get_temp_dir() . '/oak-session-' . bin2hex(random_bytes(8));
+        mkdir($path);
+        $filesystem = new class extends LocalFilesystem {
+            public function delete(string $path)
+            {
+                // Simulate a concurrent collector removing the checked file.
+                unlink($path);
+                parent::delete($path);
+            }
+        };
+        $handler = new FileSessionHandler($path, $filesystem);
+        $handler->write('abc123', 'payload');
+
+        set_error_handler(static function (
+            int $severity,
+            string $message,
+            string $file,
+            int $line,
+        ): never {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        });
+
+        try {
+            expect($handler->destroy('abc123'))->toBeTrue();
+            expect(file_exists($path . '/abc123'))->toBeFalse();
+            expect($handler->destroy('abc123'))->toBeTrue();
+        } finally {
+            restore_error_handler();
+            if (file_exists($path . '/abc123')) {
+                unlink($path . '/abc123');
+            }
+            rmdir($path);
+        }
+    },
+);
+
+test('destroy preserves real filesystem deletion errors', function () {
+    $path = sys_get_temp_dir() . '/oak-session-' . bin2hex(random_bytes(8));
+    mkdir($path);
+    // A directory cannot be unlinked, even when the test runs as root.
+    mkdir($path . '/abc123');
+    $handler = new FileSessionHandler($path, new LocalFilesystem());
+
+    set_error_handler(static function (
+        int $severity,
+        string $message,
+        string $file,
+        int $line,
+    ): never {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    });
+
+    try {
+        expect(fn() => $handler->destroy('abc123'))->toThrow(
+            ErrorException::class,
+        );
+        expect(is_dir($path . '/abc123'))->toBeTrue();
+    } finally {
+        restore_error_handler();
+        rmdir($path . '/abc123');
+        rmdir($path);
     }
 });

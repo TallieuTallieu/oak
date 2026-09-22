@@ -66,7 +66,26 @@ class FileSessionHandler implements SessionHandlerInterface
             return false;
         }
 
-        $this->filesystem->delete($this->path . '/' . $sessionId);
+        $path = $this->path . '/' . $sessionId;
+
+        if (!$this->filesystem->exists($path)) {
+            return true;
+        }
+
+        try {
+            $this->filesystem->delete($path);
+        } catch (\ErrorException $exception) {
+            // Garbage collection may remove the file after the existence check.
+            // Refresh PHP's stat cache before deciding whether deletion failed.
+            clearstatcache(true, $path);
+
+            if (
+                $exception->getSeverity() !== E_WARNING ||
+                $this->filesystem->exists($path)
+            ) {
+                throw $exception;
+            }
+        }
 
         return true;
     }

@@ -9,6 +9,9 @@ namespace Oak\Contracts\Filesystem;
 interface FilesystemInterface
 {
     /**
+     * The filesystem can change between calls, including in another process.
+     *
+     * @phpstan-impure
      * @param string $path
      * @return bool
      */

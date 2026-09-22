@@ -252,11 +252,11 @@ class Session
         $this->saved = false;
         $this->save();
 
+        $cookie->set($this->getCookieName(), $newId);
+
         if ($destroyOld && $oldId !== null && $oldId !== $newId) {
             $this->handler->destroy($oldId);
         }
-
-        $cookie->set($this->getCookieName(), $newId);
     }
 
     /**

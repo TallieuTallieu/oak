@@ -9,8 +9,15 @@ namespace Oak\Contracts\Dispatcher;
 interface DispatcherInterface
 {
     /**
-     * @param string $eventName
-     * @param callable(EventInterface|null): void $listener
+     * Registers a listener for an event
+     *
+     * Naming an event class binds the listener to that class: it is called
+     * with an instance of it and with nothing else, so it can be typed for it.
+     * Any other name is a plain signal, for which no event type is known.
+     *
+     * @template TEvent of EventInterface
+     * @param class-string<TEvent>|literal-string $eventName
+     * @param callable(TEvent): void $listener
      * @param bool $isolated Whether a throwable from this listener is kept from
      *                       taking down the rest of the event
      * @return mixed
@@ -22,14 +29,15 @@ interface DispatcherInterface
     );
 
     /**
-     * @param (callable(\Throwable, string, callable(EventInterface|null): void): void)|null $handler
+     * @param (callable(\Throwable, string, callable(never): void): void)|null $handler
      * @return mixed
      */
     public function setExceptionHandler(?callable $handler);
 
     /**
-     * @param string $eventName
-     * @return array<int, callable(EventInterface|null): void>
+     * @template TEvent of EventInterface
+     * @param class-string<TEvent>|literal-string $eventName
+     * @return array<int, callable(TEvent): void>
      */
     public function getListeners(string $eventName): array;
 

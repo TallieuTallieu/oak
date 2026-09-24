@@ -156,6 +156,45 @@ Dispatcher::dispatch('created', new Event());
 
 ```
 
+##### Listening for an event class
+
+An event name that is a class name binds its listeners to that class. The
+listener is handed an instance of it and nothing else, so it can be typed for
+that class instead of for every event:
+
+```php
+<?php
+
+use Oak\Dispatcher\Facade\Dispatcher;
+
+Dispatcher::addListener(InvoiceSend::class, function (InvoiceSend $event) {
+  $invoice = $event->getInvoice();
+});
+
+Dispatcher::dispatch(InvoiceSend::class, new InvoiceSend($invoice));
+```
+
+Static analysis knows this too: a listener registered for an event class sees
+that class, even when its parameter is left untyped, so calling a method of the
+event needs no `instanceof` guard.
+
+The dispatcher keeps that promise. Dispatching under a class name with an event
+that is not an instance of it (or with no event at all) passes its listeners by
+instead of handing them something they were not registered for.
+
+Any other name is a plain signal. Nothing is known about its event, so its
+listeners are handed whatever is dispatched, including nothing:
+
+```php
+<?php
+
+Dispatcher::addListener('app.booted', function () {
+  echo 'Booted!';
+});
+
+Dispatcher::dispatch('app.booted');
+```
+
 ##### Isolating listeners
 
 By default a listener that throws takes down every listener registered after it

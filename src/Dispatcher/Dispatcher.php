@@ -53,10 +53,6 @@ class Dispatcher implements DispatcherInterface
             $this->listeners[$eventName] = [];
         }
 
-        // A listener registered for an event class accepts that class and
-        // nothing else, which is narrower than what the shared list can say it
-        // holds. Widening it here is what {@see call()} pays for by refusing to
-        // hand a listener an event that is not the one it was registered for.
         /** @phpstan-ignore assign.propertyType */
         $this->listeners[$eventName][] = [$listener, $isolated];
     }

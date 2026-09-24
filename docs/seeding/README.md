@@ -34,6 +34,40 @@ class CountriesSeeder implements SeederInterface
 
 Bind the project's database connection with `$app->instance(PDO::class, $connection)` and configure it to throw on errors (`PDO::ERRMODE_EXCEPTION`). The example preserves an existing row; adapt the SQL and conflict handling to your database. Seeders can just as well use project repositories, dry models, or another storage library.
 
+### Use dry models
+
+In a dry project, a seeder can use the project's `dry\orm\Model` classes directly. No container binding is needed: models open their connection through `dry\db\Connection`, which reads `app/configuration/db.inc.php`, the same connection file-based revisions use under `php oak`.
+
+```php
+<?php
+
+namespace app\seeders;
+
+use app\model\Department;
+use dry\db\FetchException;
+use Oak\Contracts\Seeding\SeederInterface;
+
+class DepartmentsSeeder implements SeederInterface
+{
+    private const NAMES = ['Bakery', 'Butcher', 'Produce'];
+
+    public function seed(): void
+    {
+        foreach (self::NAMES as $name) {
+            try {
+                Department::load_first('name', $name);
+            } catch (FetchException) {
+                $department = new Department();
+                $department->name = $name;
+                $department->save();
+            }
+        }
+    }
+}
+```
+
+Use `load_first()` for an existence check, not `load_by()`: `load_by()` also throws `FetchException` when more than one row matches, so the seeder would insert yet another duplicate. Constructor injection still works for project services such as repositories.
+
 ## Register seeders
 
 Register the console provider and the seeding provider before your project's provider:
@@ -61,6 +95,8 @@ public function boot(ContainerInterface $app): void
     $seeders->register('demo-catalog', DemoCatalogSeeder::class);
 }
 ```
+
+In a dry project, add `\Oak\Seeding\SeedingServiceProvider::class` to the Oak block of `app/configuration/providers.inc.php`, after `ConsoleServiceProvider`, and register seeders in `provider\AppServiceProvider::boot()`. The project's `MigrationServiceProvider` may come before `AppServiceProvider`, because seeder lookup is deferred until a revision runs (see [Execute from a revision](#execute-from-a-revision)).
 
 `DemoCatalogSeeder` represents another project-defined implementation. `register()` also accepts a `SeederInterface` instance instead of a class name. Names must be non-empty and unique. Registering a class does not construct or execute it; the container resolves it at execution time, respecting your normal bindings and singleton configuration.
 

@@ -11,6 +11,7 @@
 7. [Migration Logging](#migration-logging)
 8. [Ordering Across Migrators: MigratorRevision](#ordering-across-migrators-migratorrevision)
 9. [File-Based Revisions in Projects](file-based-revisions.md) — the dry-project pattern with timestamped revision files and package pins
+10. [Seeding](../seeding/README.md) — run a registered seeder at a chosen point with `SeederRevision`
 
 ## Overview
 

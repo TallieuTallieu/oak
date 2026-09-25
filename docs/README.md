@@ -47,6 +47,10 @@ Cron-based task scheduling.
 
 Session and cookie handling.
 
+### 11. [Seeding](seeding/README.md)
+
+Explicitly registered project seeders, manual execution, and integration with migration revisions. Projects control data handling and rollback.
+
 ## Using with Obsidian
 
 This documentation is optimized for [Obsidian](https://obsidian.md/). To view it in your vault:

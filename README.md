@@ -2,16 +2,17 @@
 
 ### Simple PHP building blocks framework
 
-* [Config](#config)
-* [Console](#console)
-* [Container](#container)
-* [Dispatcher](#dispatcher)
-* [Filesystem](#filesystem)
-* [Logger](#logger)
-* Scheduler
-* [Session](#session)
+- [Config](#config)
+- [Console](#console)
+- [Container](#container)
+- [Dispatcher](#dispatcher)
+- [Filesystem](#filesystem)
+- [Logger](#logger)
+- Scheduler
+- [Session](#session)
 
 #### Install
+
 ```ssh
 composer require tallieutallieu/oak
 ```
@@ -22,20 +23,18 @@ composer require tallieutallieu/oak
 <?php
 
 $app = new \Oak\Application(
-    __DIR__.'/../', // The path to your .env file
-    __DIR__.'/../config/', // The path to your config files
-    __DIR__.'/../cache/' // The path where the application can write cache to 
+    __DIR__ . '/../', // The path to your .env file
+    __DIR__ . '/../config/', // The path to your config files
+    __DIR__ . '/../cache/', // The path where the application can write cache to
 );
 
-$app->register([
-    \Oak\Console\ConsoleServiceProvider::class,
-]);
+$app->register([\Oak\Console\ConsoleServiceProvider::class]);
 
 $app->bootstrap();
 ```
 
-The example above only registers the Console component. This is an easy example since the Console component doesn't 
-depend on any other components. To run the Console component, you'll have to get the Console\Kernel from your 
+The example above only registers the Console component. This is an easy example since the Console component doesn't
+depend on any other components. To run the Console component, you'll have to get the Console\Kernel from your
 application handle the incoming Input:
 
 ```php
@@ -47,11 +46,11 @@ use Oak\Contracts\Console\KernelInterface;
 
 $app->get(KernelInterface::class)->handle(
     $app->get(InputInterface::class),
-    $app->get(OutputInterface::class)
+    $app->get(OutputInterface::class),
 );
 ```
 
-To use the HTTP component (PSR-7 & PSR-15 compliant) you'll also have to register the Config component...and since the Config component reads 
+To use the HTTP component (PSR-7 & PSR-15 compliant) you'll also have to register the Config component...and since the Config component reads
 configuration values from the filesystem, you'll also have to register the Filesystem component:
 
 ```php
@@ -74,7 +73,7 @@ use Oak\Contracts\Http\KernelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 $app->get(KernelInterface::class)->handle(
-    $app->get(ServerRequestInterface::class)
+    $app->get(ServerRequestInterface::class),
 );
 ```
 
@@ -84,17 +83,19 @@ $app->get(KernelInterface::class)->handle(
 <?php
 
 $config->set('package', [
-  'client_id' => '123',
-  'client_secret' => 'F1jK4s5mPs9s1_sd1wpalnbs5H1',
+    'client_id' => '123',
+    'client_secret' => 'F1jK4s5mPs9s1_sd1wpalnbs5H1',
 ]);
 
 echo $config->get('package.client_secret'); // F1jK4s5mPs9s1_sd1wpalnbs5H1
 ```
 
 ##### Config commands
+
 ```ssh
 php oak config clear-cache
 ```
+
 ```ssh
 php oak config cache
 ```
@@ -125,12 +126,12 @@ Cookie::delete('key');
 
 ##### Cookie config options
 
-Name | Default
----- | -------
-path | /
-secure | false
-http_only | true
-same_site | Lax
+| Name      | Default |
+| --------- | ------- |
+| path      | /       |
+| secure    | false   |
+| http_only | true    |
+| same_site | Lax     |
 
 `same_site` accepts `Lax`, `Strict` or `None`. `None` is only valid together
 with `secure`; combining it with an insecure cookie throws instead of letting
@@ -148,12 +149,11 @@ the browser silently drop the cookie.
 
 use Oak\Dispatcher\Facade\Dispatcher;
 
-Dispatcher::addListener('created', function($event) {
-  echo 'Creation happened!';
+Dispatcher::addListener('created', function ($event) {
+    echo 'Creation happened!';
 });
 
 Dispatcher::dispatch('created', new Event());
-
 ```
 
 ##### Listening for an event class
@@ -171,16 +171,16 @@ use Oak\Dispatcher\Facade\Dispatcher;
 
 class InvoiceSend extends Event
 {
-  public function __construct(private Invoice $invoice) {}
+    public function __construct(private Invoice $invoice) {}
 
-  public function getInvoice(): Invoice
-  {
-    return $this->invoice;
-  }
+    public function getInvoice(): Invoice
+    {
+        return $this->invoice;
+    }
 }
 
 Dispatcher::addListener(InvoiceSend::class, function (InvoiceSend $event) {
-  $invoice = $event->getInvoice();
+    $invoice = $event->getInvoice();
 });
 
 Dispatcher::dispatch(new InvoiceSend($invoice));
@@ -209,7 +209,7 @@ listeners are handed whatever is dispatched, including nothing:
 <?php
 
 Dispatcher::addListener('app.booted', function () {
-  echo 'Booted!';
+    echo 'Booted!';
 });
 
 Dispatcher::dispatch('app.booted');
@@ -228,7 +228,11 @@ use Oak\Dispatcher\Facade\Dispatcher;
 use Oak\Logger\Facade\Logger;
 
 // Where throwables from isolated listeners go
-Dispatcher::setExceptionHandler(function (Throwable $throwable, string $eventName, callable $listener) {
+Dispatcher::setExceptionHandler(function (
+    Throwable $throwable,
+    string $eventName,
+    callable $listener,
+) {
     Logger::log($eventName . ' listener failed: ' . $throwable->getMessage());
 });
 
@@ -265,10 +269,10 @@ Logger::log('This message will be logged');
 
 ##### Logger config options
 
-Name | Default
----- | -------
-filename | logs/log.txt
-date_format | d/m/Y H:i
+| Name        | Default      |
+| ----------- | ------------ |
+| filename    | logs/log.txt |
+| date_format | d/m/Y H:i    |
 
 #### Session
 
@@ -308,12 +312,12 @@ Session::destroy();
 
 ##### Session config options
 
-Name | Default
----- | -------
-handler | \Oak\Session\FileSessionHandler
-path | sessions
-name | app
-cookie_prefix | session
-identifier_length | 40
-lottery | 200
-max_lifetime | 1000
+| Name              | Default                         |
+| ----------------- | ------------------------------- |
+| handler           | \Oak\Session\FileSessionHandler |
+| path              | sessions                        |
+| name              | app                             |
+| cookie_prefix     | session                         |
+| identifier_length | 40                              |
+| lottery           | 200                             |
+| max_lifetime      | 1000                            |

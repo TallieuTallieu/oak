@@ -12,8 +12,8 @@ use Oak\Facade;
  * @method static mixed setExceptionHandler((callable(\Throwable, string, callable(never): void): void)|null $handler) Set the handler for throwables raised by isolated listeners
  * @method static array<int, callable(TEvent): void> getListeners<TEvent of \Oak\Contracts\Dispatcher\EventInterface>(class-string<TEvent>|literal-string $eventName) Get all listeners for an event
  * @method static bool hasListeners(string $eventName) Check if an event has listeners
- * @method static mixed dispatch(string $eventName, \Oak\Contracts\Dispatcher\EventInterface|null $event = null) Dispatch an event to listeners
- * @method static mixed dispatchIsolated(string $eventName, \Oak\Contracts\Dispatcher\EventInterface|null $event = null) Dispatch an event, isolating every listener
+ * @method static mixed dispatch<TEvent of \Oak\Contracts\Dispatcher\EventInterface>(\Oak\Contracts\Dispatcher\EventInterface|class-string<TEvent>|literal-string $eventName, ($eventName is \Oak\Contracts\Dispatcher\EventInterface ? null : ($eventName is class-string<TEvent> ? TEvent : \Oak\Contracts\Dispatcher\EventInterface|null)) $event = null) Dispatch an event to listeners
+ * @method static mixed dispatchIsolated<TEvent of \Oak\Contracts\Dispatcher\EventInterface>(\Oak\Contracts\Dispatcher\EventInterface|class-string<TEvent>|literal-string $eventName, ($eventName is \Oak\Contracts\Dispatcher\EventInterface ? null : ($eventName is class-string<TEvent> ? TEvent : \Oak\Contracts\Dispatcher\EventInterface|null)) $event = null) Dispatch an event, isolating every listener
  *
  * @extends Facade<DispatcherInterface>
  */

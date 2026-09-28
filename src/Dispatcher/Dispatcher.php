@@ -28,10 +28,11 @@ class Dispatcher implements DispatcherInterface
     /**
      * Add a listener to an event by name
      *
-     * Naming an event class binds the listener to that class: {@see dispatch()}
-     * only hands it an instance of it, so it can be typed for that class
-     * instead of for every event. Any other name is a plain signal, for which
-     * no event type is known and the listener is handed whatever is dispatched.
+     * Naming an event class binds the listener to that class, so it can be
+     * typed for it instead of for every event. Dispatching the event object
+     * itself, see {@see dispatch()}, is what guarantees the listener is handed
+     * an instance of it. Any other name is a plain signal, for which no event
+     * type is known and the listener is handed whatever is dispatched.
      *
      * An isolated listener cannot take the rest of the event down with it: a
      * throwable it raises is handed to the configured exception handler, and
@@ -105,28 +106,48 @@ class Dispatcher implements DispatcherInterface
     }
 
     /**
-     * Dispatches an event by name
+     * Dispatches an event
+     *
+     * Pass the event object on its own to dispatch it under its class: the
+     * listeners of that class run first, then those of its parent classes and
+     * of the interfaces it implements, so the name and the event cannot
+     * disagree. Pass a name, optionally with an event, to dispatch a signal.
+     *
+     * Dispatching by the name of an event class takes an instance of that
+     * class as the event, as that is what its listeners are typed for.
+     * Static analysis cannot tell when that event is left out altogether,
+     * so its listeners would be handed null: dispatch the object instead.
      *
      * A listener that throws takes the event down with it unless it was
      * registered as isolated. Use {@see dispatchIsolated()} to isolate every
      * listener of a single dispatch instead.
      *
-     * @param string $eventName
-     * @param ?EventInterface $event
+     * @template TEvent of EventInterface
+     * @param EventInterface|class-string<TEvent>|literal-string $eventName
+     * @param ($eventName is EventInterface ? null : ($eventName is class-string<TEvent> ? TEvent : EventInterface|null)) $event
+     * @throws \InvalidArgumentException When an event object is combined with
+     *                                   a second event
      */
-    public function dispatch(string $eventName, ?EventInterface $event = null)
-    {
+    public function dispatch(
+        string|EventInterface $eventName,
+        ?EventInterface $event = null,
+    ) {
         $this->call($eventName, $event, false);
     }
 
     /**
-     * Dispatches an event by name, isolating every one of its listeners
+     * Dispatches an event, isolating every one of its listeners
      *
-     * @param string $eventName
-     * @param ?EventInterface $event
+     * Takes the same arguments as {@see dispatch()}.
+     *
+     * @template TEvent of EventInterface
+     * @param EventInterface|class-string<TEvent>|literal-string $eventName
+     * @param ($eventName is EventInterface ? null : ($eventName is class-string<TEvent> ? TEvent : EventInterface|null)) $event
+     * @throws \InvalidArgumentException When an event object is combined with
+     *                                   a second event
      */
     public function dispatchIsolated(
-        string $eventName,
+        string|EventInterface $eventName,
         ?EventInterface $event = null,
     ) {
         $this->call($eventName, $event, true);
@@ -135,48 +156,61 @@ class Dispatcher implements DispatcherInterface
     /**
      * Calls every listener for an event
      *
-     * @param string $eventName
+     * @param string|EventInterface $eventName
      * @param ?EventInterface $event
      * @param bool $isolateAll
      * @return void
+     * @throws \InvalidArgumentException When an event object is combined with
+     *                                   a second event
      * @throws \Throwable The first throwable raised by an isolated listener,
      *                    when no exception handler is configured
      */
     private function call(
-        string $eventName,
+        string|EventInterface $eventName,
         ?EventInterface $event,
         bool $isolateAll,
     ) {
-        if (!$this->eventBelongsTo($eventName, $event)) {
-            return;
+        if ($eventName instanceof EventInterface) {
+            if ($event !== null) {
+                throw new \InvalidArgumentException(
+                    'An event object is dispatched under its own class, it cannot be combined with a second event',
+                );
+            }
+
+            $event = $eventName;
+            $eventNames = $this->getEventNames($event);
+        } else {
+            $eventNames = [$eventName];
         }
 
         $unhandled = null;
 
-        foreach ($this->listeners[$eventName] ?? [] as [$listener, $isolated]) {
-            if (!$isolateAll && !$isolated) {
-                $listener($event);
-            } else {
-                try {
+        foreach ($eventNames as $name) {
+            foreach ($this->listeners[$name] ?? [] as [$listener, $isolated]) {
+                if (!$isolateAll && !$isolated) {
                     $listener($event);
-                } catch (\Throwable $throwable) {
-                    if ($this->exceptionHandler !== null) {
-                        ($this->exceptionHandler)(
-                            $throwable,
-                            $eventName,
-                            $listener,
-                        );
-                    } elseif ($unhandled === null) {
-                        // Nowhere to report this, so keep it and let it surface
-                        // once the remaining listeners have had their turn
-                        $unhandled = $throwable;
+                } else {
+                    try {
+                        $listener($event);
+                    } catch (\Throwable $throwable) {
+                        if ($this->exceptionHandler !== null) {
+                            ($this->exceptionHandler)(
+                                $throwable,
+                                $name,
+                                $listener,
+                            );
+                        } elseif ($unhandled === null) {
+                            // Nowhere to report this, so keep it and let it surface
+                            // once the remaining listeners have had their turn
+                            $unhandled = $throwable;
+                        }
                     }
                 }
-            }
 
-            // Stop calling the upcoming listeners if the propagation was stopped
-            if ($event !== null && $event->isPropagationStopped()) {
-                break;
+                // Stop calling the upcoming listeners if the propagation was stopped
+                if ($event !== null && $event->isPropagationStopped()) {
+                    break 2;
+                }
             }
         }
 
@@ -186,26 +220,20 @@ class Dispatcher implements DispatcherInterface
     }
 
     /**
-     * Whether a dispatched event is the one an event name stands for
+     * Gets the names an event object is dispatched under
      *
-     * An event name that is a class or an interface is a promise to the
-     * listeners registered under it: they are typed for that class, so an event
-     * that is not an instance of it is not theirs to receive and the dispatch
-     * passes them by. Every other name is a plain signal that promises nothing
-     * about the event, so anything dispatched under it reaches its listeners.
+     * Its own class comes first, then its parent classes from the nearest up,
+     * then the interfaces it implements.
      *
-     * @param string $eventName
-     * @param ?EventInterface $event
-     * @return bool
+     * @param EventInterface $event
+     * @return array<int, string>
      */
-    private function eventBelongsTo(
-        string $eventName,
-        ?EventInterface $event,
-    ): bool {
-        if (!class_exists($eventName) && !interface_exists($eventName)) {
-            return true;
-        }
-
-        return $event instanceof $eventName;
+    private function getEventNames(EventInterface $event): array
+    {
+        return [
+            $event::class,
+            ...array_values(class_parents($event)),
+            ...array_values(class_implements($event)),
+        ];
     }
 }

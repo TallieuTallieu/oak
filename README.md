@@ -158,29 +158,49 @@ Dispatcher::dispatch('created', new Event());
 
 ##### Listening for an event class
 
-An event name that is a class name binds its listeners to that class. The
-listener is handed an instance of it and nothing else, so it can be typed for
-that class instead of for every event:
+An event name that is a class name binds its listeners to that class, so a
+listener can be typed for that class instead of for every event. Dispatch the
+event object itself: its class is the name, so the listeners are always handed
+an instance of the class they were registered for.
 
 ```php
 <?php
 
+use Oak\Dispatcher\Event;
 use Oak\Dispatcher\Facade\Dispatcher;
+
+class InvoiceSend extends Event
+{
+  public function __construct(private Invoice $invoice) {}
+
+  public function getInvoice(): Invoice
+  {
+    return $this->invoice;
+  }
+}
 
 Dispatcher::addListener(InvoiceSend::class, function (InvoiceSend $event) {
   $invoice = $event->getInvoice();
 });
 
-Dispatcher::dispatch(InvoiceSend::class, new InvoiceSend($invoice));
+Dispatcher::dispatch(new InvoiceSend($invoice));
 ```
 
 Static analysis knows this too: a listener registered for an event class sees
 that class, even when its parameter is left untyped, so calling a method of the
 event needs no `instanceof` guard.
 
-The dispatcher keeps that promise. Dispatching under a class name with an event
-that is not an instance of it (or with no event at all) passes its listeners by
-instead of handing them something they were not registered for.
+A dispatched event object also reaches the listeners of its parent classes and
+of the interfaces it implements, after those of its own class. Stopping
+propagation stops all of them.
+
+An event object is dispatched on its own: passing a second event next to it
+throws an `InvalidArgumentException`. Dispatching by name, as in
+`Dispatcher::dispatch(InvoiceSend::class, $event)`, still works but reaches only
+the listeners of that exact name. Static analysis requires `$event` to be an
+`InvoiceSend` there, but cannot tell when it is left out altogether:
+`Dispatcher::dispatch(InvoiceSend::class)` passes analysis and hands the
+listeners `null`. Dispatching the object avoids that.
 
 Any other name is a plain signal. Nothing is known about its event, so its
 listeners are handed whatever is dispatched, including nothing:
@@ -222,6 +242,10 @@ Dispatcher::dispatchIsolated('order.paid', new Event());
 Nothing is swallowed: if no exception handler is configured, the remaining
 listeners still run and the first throwable is re-thrown once the event is
 finished.
+
+The `$eventName` handed to the exception handler is the name the failing
+listener was registered under. For a dispatched event object that can be a
+parent class or an interface of the event.
 
 #### Filesystem
 

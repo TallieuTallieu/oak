@@ -27,9 +27,9 @@ Command-line kernel with signature-based commands and sub-commands.
 
 PSR-7 messages and PSR-15 middleware.
 
-### 6. Dispatcher
+### 6. [Dispatcher](dispatcher/README.md)
 
-Event dispatching.
+Event objects dispatched under their class hierarchy, named signals, propagation, and isolating listeners that throw.
 
 ### 7. Filesystem
 

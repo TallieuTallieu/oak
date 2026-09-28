@@ -5,6 +5,12 @@ follow [Semantic Versioning](https://semver.org). New entries are generated from
 commit messages by [dry-ci](https://github.com/TallieuTallieu/dry-ci); past
 entries may be edited by hand.
 
+## 4.2.2 - 2026-09-28
+
+### Other changes
+
+- Switch to dry-ci
+
 ## 4.2.1 - 2026-09-28
 
 No notable changes.

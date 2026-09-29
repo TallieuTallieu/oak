@@ -125,6 +125,49 @@ test('registration is lazy and the provider shares one manager', function () {
 });
 
 test(
+    'class-only registration is lazy and executable by class name',
+    function () {
+        [$app, $manager, $state] = seedingTestServices();
+        $manager->register(SeedingTestSeeder::class);
+
+        expect($state->constructions)->toBe(0);
+        expect($state->events)->toBe([]);
+
+        $manager->run(SeedingTestSeeder::class);
+        $app->get(KernelInterface::class)->handle(
+            seedingTestInput('seed', SeedingTestSeeder::class),
+            new SeedingTestOutput(),
+        );
+
+        expect($state->events)->toBe(['seed', 'seed']);
+        expect(
+            fn() => $manager->register(
+                SeedingTestSeeder::class,
+                SeedingTestSeeder::class,
+            ),
+        )->toThrow(
+            InvalidArgumentException::class,
+            "Seeder 'SeedingTestSeeder' is already registered",
+        );
+    },
+);
+
+test('class-only registration rejects invalid seeders', function () {
+    [, $manager] = seedingTestServices();
+
+    // @phpstan-ignore argument.type (Intentionally invalid to verify runtime validation.)
+    expect(fn() => $manager->register(SeedingTestState::class))->toThrow(
+        InvalidArgumentException::class,
+        'A seeder must implement SeederInterface',
+    );
+    // @phpstan-ignore argument.type (Intentionally invalid to verify runtime validation.)
+    expect(fn() => $manager->register(' '))->toThrow(
+        InvalidArgumentException::class,
+        'A seeder name must not be empty',
+    );
+});
+
+test(
     'only the selected seeder runs and manual execution is repeatable',
     function () {
         [, $manager, $state] = seedingTestServices();

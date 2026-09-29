@@ -23,12 +23,18 @@ class SeederManager
     public function __construct(private ContainerInterface $app) {}
 
     /**
-     * @param string $name
-     * @param SeederInterface|class-string<SeederInterface> $seeder
+     * Use the class name as the registration name when no seeder is supplied.
+     *
+     * @param ($seeder is null ? class-string<SeederInterface> : string) $name
+     * @param SeederInterface|class-string<SeederInterface>|null $seeder
      * @return void
      */
-    public function register(string $name, SeederInterface|string $seeder): void
-    {
+    public function register(
+        string $name,
+        SeederInterface|string|null $seeder = null,
+    ): void {
+        $seeder ??= $name;
+
         if (trim($name) === '') {
             throw new InvalidArgumentException(
                 'A seeder name must not be empty',

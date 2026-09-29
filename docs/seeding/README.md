@@ -100,6 +100,15 @@ In a dry project, add `\Oak\Seeding\SeedingServiceProvider::class` to the Oak bl
 
 `DemoCatalogSeeder` represents another project-defined implementation. `register()` also accepts a `SeederInterface` instance instead of a class name. Names must be non-empty and unique. Registering a class does not construct or execute it; the container resolves it at execution time, respecting your normal bindings and singleton configuration.
 
+To use the fully qualified class name as the registration name, pass just the class:
+
+```php
+$seeders->register(CountriesSeeder::class);
+$seeders->run(CountriesSeeder::class);
+```
+
+This is equivalent to `register(CountriesSeeder::class, CountriesSeeder::class)`. Use that same class name when selecting the seeder in a `SeederRevision` or from the console (for example, `php oak seed 'app\seeders\CountriesSeeder'`). The two-argument form remains available for custom names and seeder instances.
+
 There is no automatic directory discovery, run-all operation, or automatic execution during bootstrap or deployment. Registration alone never seeds data. No seeding config file or migration provider is required for manual execution.
 
 ## Execute manually
